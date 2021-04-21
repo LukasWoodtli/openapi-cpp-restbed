@@ -14,6 +14,7 @@ $generator_cmd version
 # Extract templates from jar
 # $generator_cmd author template -g cpp-restbed-server
 
+$generator_cmd generate -i petstore.yaml -g cpp-pistache-server -o pistache/generated_src
 $generator_cmd generate -i petstore.yaml -g cpp-restbed-server -o restbed/generated_src -t cpp_restbed_server_custom_templates
 
 #$generator_cmd generate -i petstore.yaml -g java -o java_client/generated_src

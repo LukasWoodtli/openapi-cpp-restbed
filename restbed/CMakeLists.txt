@@ -20,6 +20,12 @@ target_include_directories(restbed_server
         PRIVATE
         ${GENERATED_SOURCES_INCLUDE_DIRS})
 
-target_sources(restbed_server PRIVATE ${GENERATED_SOURCES})
+target_sources(restbed_server
+        PRIVATE
+        ${GENERATED_SOURCES}
+        main.cpp)
 
-target_link_libraries(restbed_server PRIVATE Boost::system)
+target_link_libraries(restbed_server
+        PRIVATE
+            Boost::system
+            restbed-shared)

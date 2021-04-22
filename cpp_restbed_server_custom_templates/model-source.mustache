@@ -38,11 +38,16 @@ namespace {{this}} {
 	m_{{name}} = {{{defaultValue}}};
 	{{/isDateTime}}
 	{{#isEnum}}
-	m_{{enumName}} = { {{#allowableValues}}{{#enumVars}}{{^-first}}, {{/-first}}{{{value}}}{{/enumVars}}{{/allowableValues}} };
+	m_{{enumName}} = { {{#allowableValues}}{{#enumVars}}{{^-first}}, {{/-first}}"{{{value}}}"{{/enumVars}}{{/allowableValues}} };
 	{{/isEnum}}
 	{{/isPrimitiveType}}
 	{{/isContainer}}
 	{{/vars}}
+}
+
+{{classname}}::{{classname}}(boost::property_tree::ptree const& pt)
+{
+        fromPropertyTree(pt);
 }
 
 {{classname}}::~{{classname}}()
@@ -155,7 +160,35 @@ void {{classname}}::fromPropertyTree(ptree const &pt)
 	if (pt.get_child_optional("{{baseName}}")) {
 		for (const auto &childTree : pt.get_child("{{baseName}}")) {
 		{{#mostInnerItems}}
-			m_{{name}}.emplace_back({{#isNumeric}}{{^isFloat}}{{^isLong}}{{^isInteger}}std::stod{{/isInteger}}{{/isLong}}{{/isFloat}}{{#isDouble}}std::stod{{/isDouble}}{{#isFloat}}std::stof{{/isFloat}}{{#isInteger}}std::stoi{{/isInteger}}{{#isLong}}std::stol{{/isLong}}({{/isNumeric}}childTree.second.data()){{#isNumeric}}){{/isNumeric}};
+                      {{{dataType}}} val =
+                      {{#isNumeric}}
+                            {{^isFloat}}
+                            {{^isLong}}
+                            {{^isInteger}}
+                            std::stod(childTree.second.data());
+                            {{/isInteger}}
+                            {{/isLong}}
+                            {{/isFloat}}
+                            {{#isDouble}}
+                            std::stod(childTree.second.data());
+                            {{/isDouble}}
+                            {{#isFloat}}
+                            std::stof(childTree.second.data());
+                            {{/isFloat}}
+                            {{#isInteger}}
+                            std::stoi(childTree.second.data());
+                            {{/isInteger}}
+                            {{#isLong}}
+                            std::stol(childTree.second.data());
+                            {{/isLong}}
+                      {{/isNumeric}}
+                      {{#isString}}
+                            childTree.second.data();
+                      {{/isString}}
+                      {{#isModel}}
+                            std::make_shared<{{baseType}}>(childTree.second);
+                      {{/isModel}}
+                      m_{{name}}.emplace_back(std::move(val));
 		{{/mostInnerItems}}
 		}
 	}

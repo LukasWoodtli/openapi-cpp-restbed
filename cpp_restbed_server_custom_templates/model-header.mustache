@@ -29,6 +29,7 @@ class {{declspec}} {{classname}} {{#interfaces}}{{#-first}}:{{/-first}}{{^-first
 {
 public:
     {{classname}}();
+    explicit {{classname}}(boost::property_tree::ptree const& pt);
     virtual ~{{classname}}();
     
     std::string toJsonString(bool prettyJson = false);
@@ -52,7 +53,7 @@ protected:
     {{/vars}}
     {{#vars}}
     {{#isEnum}}
-    std::vector<{{{dataType}}}> m_{{enumName}};
+    std::vector<std::string> m_{{enumName}};
     {{/isEnum}}
     {{/vars}}
 };

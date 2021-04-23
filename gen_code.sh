@@ -20,6 +20,7 @@ $generator_cmd generate \
   -o restbed/generated_src \
   -t cpp_restbed_server_custom_templates \
   --global-property debugModels=true \
+  --global-property debugOpenAPI=true \
   | tee out.txt
 
 #$generator_cmd generate -i petstore.yaml -g java -o java_client/generated_src

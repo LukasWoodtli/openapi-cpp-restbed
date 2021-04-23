@@ -17,4 +17,6 @@ if(NOT restbed_POPULATED)
     add_subdirectory(${restbed_SOURCE_DIR} ${restbed_BINARY_DIR})
 endif()
 
-find_package(Boost COMPONENTS system)
+
+## Boost
+find_package(Boost COMPONENTS system unit_test_framework REQUIRED)

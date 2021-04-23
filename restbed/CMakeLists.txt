@@ -2,10 +2,26 @@
 include(dependencies.cmake)
 
 
-file(GLOB_RECURSE
-        GENERATED_SOURCES
-        CONFIGURE_DEPENDS
-        "*.cpp" "*.h")
+set(GENERATED_SOURCES
+    generated_src/model/Pet.cpp
+    generated_src/model/Tag.h
+    generated_src/model/ApiResponse.cpp
+    generated_src/model/ApiResponse.h
+    generated_src/model/Tag.cpp
+    generated_src/model/Order.h
+    generated_src/model/User.h
+    generated_src/model/Category.h
+    generated_src/model/User.cpp
+    generated_src/model/Category.cpp
+    generated_src/model/Pet.h
+    generated_src/model/Order.cpp
+    generated_src/api/PetApi.cpp
+    generated_src/api/StoreApi.h
+    generated_src/api/UserApi.cpp
+    generated_src/api/StoreApi.cpp
+    generated_src/api/PetApi.h
+    generated_src/api/UserApi.h
+)
 
 set(GENERATED_SOURCES_INCLUDE_DIRS
         generated_src/api

@@ -5,6 +5,9 @@
 #include <corvusoft/restbed/string.hpp>
 #include <corvusoft/restbed/settings.hpp>
 #include <corvusoft/restbed/request.hpp>
+#include <corvusoft/restbed/uri.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include "{{classname}}.h"
 
@@ -84,13 +87,26 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMe
 	session->fetch(content_length,
 		[ this ]( const std::shared_ptr<restbed::Session> session, const restbed::Bytes & body )
 		{
-
 			const auto request = session->get_request();
 			std::string file = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
 			/**
 			 * Get body params or form params here from the file string
 			 */
-	{{/hasBodyParam}}
+                        {{#allParams}}
+                        std::stringstream sstream(file);
+                        boost::property_tree::ptree pt;
+                        boost::property_tree::json_parser::read_json(sstream,pt);
+                        {{#isModel}}
+                        auto {{paramName}} = std::make_shared<{{{baseType}}}>(pt);
+                        {{#isArray}}
+                        auto {{paramName}} = std::make_shared<std::vector<{{{baseType}}}>>();
+                        for (const auto& child: pt) {
+                          {{paramName}}->emplace_back(std::make_shared<{{{baseType}}}>(child));
+                        }
+                        {{/isArray}}
+                        {{/isModel}}
+                        {{/allParams}}
+	                {{/hasBodyParam}}
 
 			{{#hasPathParams}}
 			// Getting the path params

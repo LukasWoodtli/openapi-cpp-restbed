@@ -4,6 +4,7 @@
 #include "{{classname}}.h"
 
 #include <string>
+#include <vector>
 #include <sstream>
 #include <stdexcept>
 {{#hasEnums}}
@@ -222,6 +223,31 @@ void {{classname}}::{{setter}}({{{dataType}}} value)
 	}{{/isEnum}}
 }
 {{/vars}}
+
+
+
+
+std::shared_ptr<{{classname}}> create{{classname}}FromJsonString(const std::string& json)
+{
+        std::stringstream sstream(json);
+        boost::property_tree::ptree pt;
+        boost::property_tree::json_parser::read_json(sstream,pt);
+        return std::make_shared<{{classname}}>(pt);
+}
+
+std::shared_ptr<std::vector<{{classname}}>> create{{classname}}VectorFromJsonString(const std::string& json)
+{
+        std::stringstream sstream(json);
+        boost::property_tree::ptree pt;
+        boost::property_tree::json_parser::read_json(sstream,pt);
+
+        auto vec = std::make_shared<std::vector<{{{classname}}}>>();
+        for (const auto& child: pt) {
+                vec->emplace_back({{{classname}}}(child.second));
+        }
+
+        return vec;
+}
 
 {{#modelNamespaceDeclarations}}
 }

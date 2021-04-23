@@ -13,6 +13,7 @@
 {{#imports}}{{{this}}}
 {{/imports}}
 #include <memory>
+#include <vector>
 #include <boost/property_tree/ptree.hpp>
 
 {{#modelNamespaceDeclarations}}
@@ -57,6 +58,10 @@ protected:
     {{/isEnum}}
     {{/vars}}
 };
+
+std::shared_ptr<{{classname}}> create{{classname}}FromJsonString(const std::string& json);
+
+std::shared_ptr<std::vector<{{classname}}>> create{{classname}}VectorFromJsonString(const std::string& json);
 
 {{#modelNamespaceDeclarations}}
 }

@@ -45,3 +45,5 @@ target_link_libraries(restbed_server
         PRIVATE
             Boost::system
             restbed-shared)
+
+add_subdirectory(test)

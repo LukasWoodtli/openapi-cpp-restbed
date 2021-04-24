@@ -38,9 +38,6 @@ namespace {{this}} {
 	{{#isDateTime}}
 	m_{{name}} = {{{defaultValue}}};
 	{{/isDateTime}}
-	{{#isEnum}}
-	m_{{enumName}} = { {{#allowableValues}}{{#enumVars}}{{^-first}}, {{/-first}}"{{{value}}}"{{/enumVars}}{{/allowableValues}} };
-	{{/isEnum}}
 	{{/isPrimitiveType}}
 	{{/isContainer}}
 	{{/vars}}

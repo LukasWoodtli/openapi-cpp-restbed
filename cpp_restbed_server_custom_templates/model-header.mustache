@@ -29,7 +29,7 @@ class  {{{this}}};
 class {{declspec}} {{classname}} {{#interfaces}}{{#-first}}:{{/-first}}{{^-first}},{{/-first}} public {{{this}}}{{/interfaces}}
 {
 public:
-    {{classname}}();
+    {{classname}}() = default;
     explicit {{classname}}(boost::property_tree::ptree const& pt);
     virtual ~{{classname}}();
     
@@ -54,7 +54,7 @@ protected:
     {{/vars}}
     {{#vars}}
     {{#isEnum}}
-    std::vector<std::string> m_{{enumName}};
+    const std::vector<std::string> m_{{enumName}} = { {{#allowableValues}}{{#enumVars}}{{^-first}}, {{/-first}}"{{{value}}}"{{/enumVars}}{{/allowableValues}} };
     {{/isEnum}}
     {{/vars}}
 };

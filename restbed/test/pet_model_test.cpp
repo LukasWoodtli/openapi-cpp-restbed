@@ -1,5 +1,6 @@
 #define BOOST_TEST_INCLUDED
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/test_case.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <sstream>
@@ -201,6 +202,79 @@ BOOST_AUTO_TEST_CASE(toPropertyTree)
   BOOST_TEST(pet.getCategory()->getName() == "Category1");
   auto categoryFromPt = pt.get_child("category");
   BOOST_TEST(categoryFromPt.get<std::string>("name") == "Category1");
+}
+
+BOOST_AUTO_TEST_CASE(photoUrls)
+{
+  Pet pet;
+  std::vector<std::string> photoUrls{"url1", "url2"};
+  pet.setPhotoUrls(photoUrls);
+
+  BOOST_TEST(pet.getPhotoUrls().size() == 2);
+  BOOST_TEST(pet.getPhotoUrls()[0] == "url1");
+  BOOST_TEST(pet.getPhotoUrls()[1] == "url2");
+}
+
+BOOST_AUTO_TEST_CASE(fromJsonWithTags) {
+  std::string json_str = R"JSON(
+{
+    "id": "1",
+    "name": "MyName",
+    "tags": [
+        {
+            "id": "1",
+            "name": "tag1"
+        },
+        {
+            "id": "2",
+            "name": "tag2"
+        }
+    ],
+    "status": "available"
+})JSON";
+
+  Pet pet;
+  pet.fromJsonString(json_str);
+
+  BOOST_TEST(pet.getTags().size() == 2);
+  BOOST_TEST(pet.getTags()[0]->getId() == 1);
+  BOOST_TEST(pet.getTags()[1]->getId() == 2);
+}
+
+BOOST_DATA_TEST_CASE(validStatusValues,
+                     boost::unit_test::data::make({"available",
+                                                   "pending",
+                                                   "sold"}),
+                     status)
+{
+  Pet pet;
+  pet.setStatus(status);
+
+  BOOST_TEST(pet.getStatus() == status);
+
+}
+
+BOOST_DATA_TEST_CASE(invalidStatusValues,
+                     boost::unit_test::data::make({"",
+                                                   "notallowed",
+                                                   "not available"}),
+                     invalid_status)
+{
+  bool exceptionCaught = false;
+
+  Pet pet;
+
+  try {
+    pet.setStatus(invalid_status);
+  }
+  catch(const std::runtime_error& excp) {
+    exceptionCaught = true;
+    const auto expectedErrorMessage = std::string("Value ") +
+                                                  invalid_status +
+                                                  " not allowed";
+    BOOST_TEST(excp.what() == expectedErrorMessage);
+  }
+  BOOST_TEST(exceptionCaught);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

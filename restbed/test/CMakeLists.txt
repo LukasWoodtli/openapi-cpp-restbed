@@ -13,9 +13,11 @@ target_sources(model_tests
         main.cpp
         pet_model_test.cpp
         tag_model_test.cpp
+        user_model_test.cpp
         ../generated_src/model/Pet.cpp
         ../generated_src/model/Tag.cpp
         ../generated_src/model/Category.cpp
+        ../generated_src/model/User.cpp
 )
 
 target_include_directories(model_tests SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})

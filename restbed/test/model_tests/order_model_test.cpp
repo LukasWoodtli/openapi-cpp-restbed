@@ -7,7 +7,7 @@
 
 #include "ApprovalTests.hpp"
 
-#include "../generated_src/model/Order.h"
+#include "model/Order.h"
 
 using namespace ApprovalTests;
 using namespace org::openapitools::server::model;

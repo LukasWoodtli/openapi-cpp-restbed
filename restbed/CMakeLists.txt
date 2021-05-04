@@ -27,21 +27,23 @@ set(GENERATED_SOURCES_INCLUDE_DIRS
         generated_src/api
         generated_src/model)
 
-add_executable(restbed_server)
+add_library(restbed_example SHARED)
 
-target_include_directories(restbed_server
+target_include_directories(restbed_example
         SYSTEM PRIVATE
-        ${restbed_SOURCE_DIR}/source)
-target_include_directories(restbed_server
+            ${restbed_SOURCE_DIR}/source)
+target_include_directories(restbed_example
+        PUBLIC
+            generated_src
         PRIVATE
-        ${GENERATED_SOURCES_INCLUDE_DIRS})
+            ${GENERATED_SOURCES_INCLUDE_DIRS})
 
-target_sources(restbed_server
+target_sources(restbed_example
         PRIVATE
         ${GENERATED_SOURCES}
         main.cpp)
 
-target_link_libraries(restbed_server
+target_link_libraries(restbed_example
         PRIVATE
             Boost::system
             restbed-shared)

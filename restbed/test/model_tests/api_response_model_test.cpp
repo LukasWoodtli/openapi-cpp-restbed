@@ -6,7 +6,7 @@
 
 #include "ApprovalTests.hpp"
 
-#include "../generated_src/model/ApiResponse.h"
+#include "model/ApiResponse.h"
 
 using namespace ApprovalTests;
 using namespace org::openapitools::server::model;

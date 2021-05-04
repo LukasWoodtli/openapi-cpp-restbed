@@ -7,9 +7,9 @@
 #include <initializer_list>
 #include "ApprovalTests.hpp"
 
-#include "../generated_src/model/Pet.h"
-#include "../generated_src/model/Tag.h"
-#include "../generated_src/model/Category.h"
+#include "model/Pet.h"
+#include "model/Tag.h"
+#include "model/Category.h"
 
 using namespace ApprovalTests;
 using namespace org::openapitools::server::model;

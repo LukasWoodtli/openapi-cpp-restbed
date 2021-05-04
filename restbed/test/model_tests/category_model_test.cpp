@@ -6,7 +6,7 @@
 
 #include "ApprovalTests.hpp"
 
-#include "../generated_src/model/Category.h"
+#include "model/Category.h"
 
 using namespace ApprovalTests;
 using namespace org::openapitools::server::model;

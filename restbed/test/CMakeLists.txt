@@ -14,6 +14,7 @@ target_sources(model_tests
         pet_model_test.cpp
         tag_model_test.cpp
         user_model_test.cpp
+        category_model_test.cpp
         ../generated_src/model/Pet.cpp
         ../generated_src/model/Tag.cpp
         ../generated_src/model/Category.cpp

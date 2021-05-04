@@ -12,6 +12,7 @@ target_sources(model_tests
         PRIVATE
         main.cpp
         pet_model_test.cpp
+        tag_model_test.cpp
         ../generated_src/model/Pet.cpp
         ../generated_src/model/Tag.cpp
         ../generated_src/model/Category.cpp

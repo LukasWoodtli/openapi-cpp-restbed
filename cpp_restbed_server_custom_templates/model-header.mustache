@@ -31,7 +31,7 @@ class {{declspec}} {{classname}} {{#interfaces}}{{#-first}}:{{/-first}}{{^-first
 public:
     {{classname}}() = default;
     explicit {{classname}}(boost::property_tree::ptree const& pt);
-    virtual ~{{classname}}();
+    virtual ~{{classname}}() = default;
     
     std::string toJsonString(bool prettyJson = false);
     void fromJsonString(std::string const& jsonString);
@@ -50,7 +50,17 @@ public:
     {{/vars}}
 protected:
     {{#vars}}
+    {{^isContainer}}
+    {{^isModel}}
+    {{{dataType}}} m_{{name}} = {{{defaultValue}}};
+    {{/isModel}}
+    {{#isModel}}
     {{{dataType}}} m_{{name}};
+    {{/isModel}}
+    {{/isContainer}}
+    {{#isContainer}}
+    {{{dataType}}} m_{{name}};
+    {{/isContainer}}
     {{/vars}}
     {{#vars}}
     {{#isEnum}}
@@ -59,9 +69,7 @@ protected:
     {{/vars}}
 };
 
-std::shared_ptr<{{classname}}> create{{classname}}FromJsonString(const std::string& json);
-
-std::shared_ptr<std::vector<{{classname}}>> create{{classname}}VectorFromJsonString(const std::string& json);
+std::vector<{{classname}}> create{{classname}}VectorFromJsonString(const std::string& json);
 
 {{#modelNamespaceDeclarations}}
 }

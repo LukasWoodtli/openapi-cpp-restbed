@@ -21,35 +21,9 @@ using boost::property_tree::write_json;
 namespace {{this}} {
 {{/modelNamespaceDeclarations}}
 
-{{classname}}::{{classname}}()
-{
-	{{#vars}}
-	{{^isContainer}}
-	{{#isPrimitiveType}}
-	m_{{name}} = {{{defaultValue}}};
-	{{/isPrimitiveType}}
-	{{^isPrimitiveType}}
-	{{#isString}}
-	m_{{name}} = {{{defaultValue}}};
-	{{/isString}}
-	{{#isDate}}
-	m_{{name}} = {{{defaultValue}}};
-	{{/isDate}}
-	{{#isDateTime}}
-	m_{{name}} = {{{defaultValue}}};
-	{{/isDateTime}}
-	{{/isPrimitiveType}}
-	{{/isContainer}}
-	{{/vars}}
-}
-
 {{classname}}::{{classname}}(boost::property_tree::ptree const& pt)
 {
         fromPropertyTree(pt);
-}
-
-{{classname}}::~{{classname}}()
-{
 }
 
 std::string {{classname}}::toJsonString(bool prettyJson)
@@ -94,28 +68,23 @@ ptree {{classname}}::toPropertyTree()
 	{{/isPrimitiveType}}
 	{{/isContainer}}
 	{{#isContainer}}
-	{{^isModelContainer}}
 	// generate tree for {{name}}
 	if (!m_{{name}}.empty()) {
 		for (const auto &childEntry : m_{{name}}) {
-			ptree {{name}}_node;
-			{{name}}_node.put("", childEntry);
-			tmp_node.push_back(std::make_pair("", {{name}}_node));
+                        {{#items}}
+                        {{#isModel}}
+                        tmp_node.push_back(std::make_pair("", childEntry->toPropertyTree()));
+                        {{/isModel}}
+                        {{^isModel}}
+                        ptree {{name}}_node;
+                        {{name}}_node.put("", childEntry);
+                        tmp_node.push_back(std::make_pair("", {{name}}_node));
+                        {{/isModel}}
+                        {{/items}}
 		}
 		pt.add_child("{{baseName}}", tmp_node);
 		tmp_node.clear();
 	}
-	{{/isModelContainer}}
-	{{#isModelContainer}}
-	// generate tree for vector of pointers of {{name}}
-	if (!m_{{name}}.empty()) {
-		for (const auto &childEntry : m_{{name}}) {
-			tmp_node.push_back(std::make_pair("", childEntry->toPropertyTree()));
-		}
-		pt.add_child("{{baseName}}", tmp_node);
-		tmp_node.clear();
-	}
-	{{/isModelContainer}}
 	{{/isContainer}}
 	{{/vars}}
 	return pt;
@@ -211,6 +180,7 @@ void {{classname}}::fromPropertyTree(ptree const &pt)
 {
     return m_{{name}};
 }
+
 void {{classname}}::{{setter}}({{{dataType}}} value)
 {
 	{{#isEnum}}if (std::find(m_{{enumName}}.begin(), m_{{enumName}}.end(), value) != m_{{enumName}}.end()) {
@@ -221,26 +191,15 @@ void {{classname}}::{{setter}}({{{dataType}}} value)
 }
 {{/vars}}
 
-
-
-
-std::shared_ptr<{{classname}}> create{{classname}}FromJsonString(const std::string& json)
-{
-        std::stringstream sstream(json);
-        boost::property_tree::ptree pt;
-        boost::property_tree::json_parser::read_json(sstream,pt);
-        return std::make_shared<{{classname}}>(pt);
-}
-
-std::shared_ptr<std::vector<{{classname}}>> create{{classname}}VectorFromJsonString(const std::string& json)
+std::vector<{{classname}}> create{{classname}}VectorFromJsonString(const std::string& json)
 {
         std::stringstream sstream(json);
         boost::property_tree::ptree pt;
         boost::property_tree::json_parser::read_json(sstream,pt);
 
-        auto vec = std::make_shared<std::vector<{{{classname}}}>>();
+        auto vec = std::vector<{{{classname}}}>();
         for (const auto& child: pt) {
-                vec->emplace_back({{{classname}}}(child.second));
+                vec.emplace_back({{{classname}}}(child.second));
         }
 
         return vec;

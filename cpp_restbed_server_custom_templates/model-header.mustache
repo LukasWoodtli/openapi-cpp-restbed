@@ -14,6 +14,9 @@
 {{/imports}}
 #include <memory>
 #include <vector>
+{{#hasEnums}}
+#include <array>
+{{/hasEnums}}
 #include <boost/property_tree/ptree.hpp>
 
 {{#modelNamespaceDeclarations}}
@@ -64,7 +67,10 @@ protected:
     {{/vars}}
     {{#vars}}
     {{#isEnum}}
-    const std::vector<std::string> m_{{enumName}} = { {{#allowableValues}}{{#enumVars}}{{^-first}}, {{/-first}}"{{{value}}}"{{/enumVars}}{{/allowableValues}} };
+    const std::array<std::string, {{#allowableValues}}{{#enumVars}}{{#-last}}{{-index}}{{/-last}}{{/enumVars}}{{/allowableValues}}> m_{{enumName}} = {
+          {{#allowableValues}}{{#enumVars}}"{{{value}}}"{{^-last}},{{/-last}}{{/enumVars}}{{/allowableValues}}
+    };
+
     {{/isEnum}}
     {{/vars}}
 };

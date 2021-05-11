@@ -35,42 +35,26 @@ using namespace {{modelNamespace}};
 class {{declspec}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource: public restbed::Resource
 {
 public:
-	{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
+    {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
     virtual ~{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
-    void {{httpMethod}}_method_handler(const std::shared_ptr<restbed::Session> session);
+
+    virtual std::pair<int, std::string> handler_{{httpMethod}}(
+            {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
+    );
+
     {{#vendorExtensions.x-codegen-other-methods}}
-    void {{httpMethod}}_method_handler(const std::shared_ptr<restbed::Session> session);
+    virtual std::pair<int, std::string> handler_{{httpMethod}}(
+            {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
+    );
     {{/vendorExtensions.x-codegen-other-methods}}
 
-	void set_handler_{{httpMethod}}(
-		std::function<std::pair<int, std::string>(
-			{{#allParams}}{{{dataType}}} const &{{^-last}}, {{/-last}}{{/allParams}}
-		)> handler
-	);
-
-	{{#vendorExtensions.x-codegen-other-methods}}
-	void set_handler_{{httpMethod}}(
-		std::function<std::pair<int, std::string>(
-			{{#allParams}}{{{dataType}}} const &{{^-last}}, {{/-last}}{{/allParams}}
-		)> handler
-	);
-	{{/vendorExtensions.x-codegen-other-methods}}
-
 private:
-	std::function<std::pair<int, std::string>(
-		{{#allParams}}{{{dataType}}} const &{{^-last}}, {{/-last}}{{/allParams}}
-	)> handler_{{httpMethod}}_;
-
-	{{#vendorExtensions.x-codegen-other-methods}}
-	std::function<std::pair<int, std::string>(
-		{{#allParams}}{{{dataType}}} const &{{^-last}}, {{/-last}}{{/allParams}}
-	)> handler_{{httpMethod}}_;
-	{{/vendorExtensions.x-codegen-other-methods}}
-
-	{{#allParams}}
-	{{{dataType}}} {{paramName}}{};
-	{{/allParams}}
+    void handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session);
+    {{#vendorExtensions.x-codegen-other-methods}}
+    void handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session);
+    {{/vendorExtensions.x-codegen-other-methods}}
 };
+
 
 {{/operation}}
 
@@ -82,9 +66,14 @@ class {{declspec}} {{classname}}: public restbed::Service
 public:
 	{{classname}}();
 	~{{classname}}();
-	void startService(int const& port);
+
+        void startService(int const& port);
 	void stopService();
-	
+
+        {{#operation}}
+        void set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
+        {{/operation}}
+
 protected:
 	{{#operation}}
 	std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;

@@ -22,8 +22,15 @@ using namespace {{modelNamespace}};
 
 {{classname}}::~{{classname}}() {}
 
+{{#operation}}
+void {{classname}}::set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource) {
+        m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;
+}
+{{/operation}}
+
+
 void {{classname}}::startService(int const& port) {
-	// A typical pattern is to derive a class from {{classname}} and allocate the shared pointers for restbed::Resource objects
+	// TODO DOCUMENTATION! A typical pattern is to derive a class from {{classname}} and allocate the shared pointers for restbed::Resource objects
 	// and manipulate them (e.g. binding GET/POST handler functions) before this startService() gets called.
 	// In such a case we want to use our m_spXXX variables.
 	// However in case these shared pointers are nullptr, then allocate the restbed::Resources now:
@@ -49,11 +56,11 @@ void {{classname}}::stopService() {
 {
 	this->set_path("{{path}}");
 	this->set_method_handler("{{httpMethod}}",
-		std::bind(&{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMethod}}_method_handler, this,
+		std::bind(&{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal, this,
 			std::placeholders::_1));
 	{{#vendorExtensions.x-codegen-other-methods}}
 	this->set_method_handler("{{httpMethod}}",
-		std::bind(&{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMethod}}_method_handler, this,
+		std::bind(&{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal, this,
 			std::placeholders::_1));
 	{{/vendorExtensions.x-codegen-other-methods}}
 }
@@ -62,23 +69,7 @@ void {{classname}}::stopService() {
 {
 }
 
-void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::set_handler_{{httpMethod}}(
-	std::function<std::pair<int, std::string>(
-		{{#allParams}}{{{dataType}}} const &{{^-last}}, {{/-last}}{{/allParams}}
-	)> handler) {
-	handler_{{httpMethod}}_ = std::move(handler);
-}
-
-{{#vendorExtensions.x-codegen-other-methods}}
-void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::set_handler_{{httpMethod}}(
-	std::function<std::pair<int, std::string>(
-		{{#allParams}}{{{dataType}}} const &{{^-last}}, {{/-last}}{{/allParams}}
-	)> handler) {
-	handler_{{httpMethod}}_ = std::move(handler);
-}
-{{/vendorExtensions.x-codegen-other-methods}}
-
-void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMethod}}_method_handler(const std::shared_ptr<restbed::Session> session) {
+void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session) {
 
 	const auto request = session->get_request();
 	{{#hasBodyParam}}
@@ -139,12 +130,9 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMe
 			int status_code = 200;
 			std::string result = "successful operation";
 
-			if (handler_{{httpMethod}}_)
-			{
-				std::tie(status_code, result) = handler_{{httpMethod}}_(
-					{{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
-				);
-			}
+                        std::tie(status_code, result) = handler_{{httpMethod}}(
+                                {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
+                        );
 
 			{{#responses}}
 			if (status_code == {{code}}) {
@@ -163,7 +151,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMe
 }
 
 {{#vendorExtensions.x-codegen-other-methods}}
-void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMethod}}_method_handler(const std::shared_ptr<restbed::Session> session) {
+void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session) {
 
 	const auto request = session->get_request();
 	{{#hasBodyParam}}
@@ -208,12 +196,9 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMe
 			int status_code = 200;
 			std::string result = "successful operation";
 
-			if (handler_{{httpMethod}}_)
-			{
-				std::tie(status_code, result) = handler_{{httpMethod}}_(
-					{{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
-				);
-			}
+                        std::tie(status_code, result) = handler_{{httpMethod}}(
+                                {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
+                        );
 
 			{{#responses}}
 			if (status_code == {{code}}) {
@@ -233,7 +218,19 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{httpMe
 		});
 	{{/hasBodyParam}}
 }
-{{/vendorExtensions.x-codegen-other-methods}}  
+{{/vendorExtensions.x-codegen-other-methods}}
+
+std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
+        {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
+        )
+        { return std::make_pair<int, std::string>(501, "Not implemented"); }
+
+{{#vendorExtensions.x-codegen-other-methods}}
+std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
+        {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
+        )
+        { return std::make_pair<int, std::string>(501, "Not implemented"); }
+{{/vendorExtensions.x-codegen-other-methods}}
 
 
 {{/operation}}

@@ -17,7 +17,10 @@ namespace {{this}} {
 
 using namespace {{modelNamespace}};
 
-{{classname}}::{{classname}}() {
+{{classname}}::{{classname}}(int const& port)
+  : m_service(std::make_shared<restbed::Service>()),
+    m_port(port)
+{
 }
 
 {{classname}}::~{{classname}}() {}
@@ -29,26 +32,37 @@ void {{classname}}::set{{classname}}{{vendorExtensions.x-codegen-resource-name}}
 {{/operation}}
 
 
-void {{classname}}::startService(int const& port) {
-	// TODO DOCUMENTATION! A typical pattern is to derive a class from {{classname}} and allocate the shared pointers for restbed::Resource objects
-	// and manipulate them (e.g. binding GET/POST handler functions) before this startService() gets called.
-	// In such a case we want to use our m_spXXX variables.
-	// However in case these shared pointers are nullptr, then allocate the restbed::Resources now:
-	{{#operation}}
-	if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource)
-		m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>();
-	this->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
-	{{/operation}}
+void {{classname}}::publishResources() {
 
-	std::shared_ptr<restbed::Settings> settings = std::make_shared<restbed::Settings>();
-	settings->set_port(port);
-	settings->set_root("{{contextPath}}");
-	
-	this->start(settings);
+        {{#operation}}
+        if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource)
+        m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>();
+        m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
+        {{/operation}}
+}
+
+void {{classname}}::setRootPath(std::string path) {
+        m_rootPath = path;
+}
+
+std::shared_ptr<restbed::Settings> {{classname}}::createSettings()
+{
+        std::shared_ptr<restbed::Settings> settings = std::make_shared<restbed::Settings>();
+        settings->set_port(m_port);
+        settings->set_root(m_rootPath);
+        return settings;
+}
+
+void {{classname}}::startService() {
+
+        publishResources();
+        std::shared_ptr<restbed::Settings> settings = createSettings();
+
+        m_service->start(settings);
 }
 
 void {{classname}}::stopService() {
-	this->stop();
+        m_service->stop();
 }
 
 {{#operation}}

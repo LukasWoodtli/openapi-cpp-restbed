@@ -34,10 +34,10 @@ BOOST_AUTO_TEST_CASE(startService)
 {
 
   std::thread thread([]{
-    StoreApi storeApi;
+    auto storeApi = StoreApi(1234);
     std::shared_ptr<StoreApiStoreInventoryResource> res = std::make_shared<MyStoreApiStoreInventoryResource>();
     storeApi.setStoreApiStoreInventoryResource(res);
-    storeApi.startService(1234);
+    storeApi.startService();
   });
   thread.detach();
 

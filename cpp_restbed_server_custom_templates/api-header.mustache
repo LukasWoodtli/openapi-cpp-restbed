@@ -61,23 +61,34 @@ private:
 //
 // The restbed service to actually implement the REST server
 //
-class {{declspec}} {{classname}}: public restbed::Service
+class {{declspec}} {{classname}}
 {
 public:
-	{{classname}}();
+	explicit {{classname}}(int const& port);
 	~{{classname}}();
-
-        void startService(int const& port);
-	void stopService();
 
         {{#operation}}
         void set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
         {{/operation}}
 
+        virtual void publishResources();
+
+        void setRootPath(std::string path);
+
+        std::shared_ptr<restbed::Settings> createSettings();
+
+        virtual void startService();
+        virtual void stopService();
+
 protected:
 	{{#operation}}
 	std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;
-	{{/operation}}	
+	{{/operation}}
+
+private:
+        std::shared_ptr<restbed::Service> m_service;
+        std::string m_rootPath = "{{contextPath}}";
+        int const m_port = 0;
 };
 
 

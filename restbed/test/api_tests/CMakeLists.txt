@@ -1,5 +1,3 @@
-add_subdirectory(c_client)
-
 
 add_executable(api_tests)
 
@@ -7,6 +5,7 @@ target_sources(api_tests
         PRIVATE
         main.cpp
         store_api_test.cpp
+        beast_client.cpp
         ../../generated_src/api/StoreApi.cpp
         ../../generated_src/model/Order.cpp
         )

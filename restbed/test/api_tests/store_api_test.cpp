@@ -2,14 +2,17 @@
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include <boost/beast/http/verb.hpp>
 #include <chrono>
+#include <functional>
 #include <iostream>
 #include <thread>
-#include <functional>
 
 #include "ApprovalTests.hpp"
 
 #include "api/StoreApi.h"
+
+#include "beast_client.h"
 
 extern "C" {
 #include "apiClient.h"
@@ -32,30 +35,20 @@ BOOST_AUTO_TEST_SUITE(StoreApiTest)
 
 BOOST_AUTO_TEST_CASE(startService)
 {
+  auto storeApi = StoreApi(1234);
+  std::shared_ptr<StoreApiStoreInventoryResource> res = std::make_shared<MyStoreApiStoreInventoryResource>();
+  storeApi.setStoreApiStoreInventoryResource(res);
 
-  std::thread thread([]{
-    auto storeApi = StoreApi(1234);
-    std::shared_ptr<StoreApiStoreInventoryResource> res = std::make_shared<MyStoreApiStoreInventoryResource>();
-    storeApi.setStoreApiStoreInventoryResource(res);
+  std::thread thread([&]{
     storeApi.startService();
   });
   thread.detach();
 
-
-  auto* client = apiClient_create();
-  auto* result = StoreAPI_getInventory(client);
-  listEntry_t* element;
-  list_ForEach(element, result) {
-    const auto kvp = (keyValuePair_t*)element->data;
-    const auto key = kvp->key;
-    std::cerr << key;
-  }
-
-  apiClient_free(client);
-
-
-  std::this_thread::sleep_for(std::chrono::minutes (1));
-  std::cerr << "service started";
+  // localhost:1234/v2/store/inventory/
+  std::string response = requestData(boost::beast::http::verb::get,
+                          "/v2/store/inventory/");
+  BOOST_TEST("Hello inventory" == response);
+  storeApi.stopService();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

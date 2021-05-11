@@ -22,5 +22,3 @@ $generator_cmd generate \
   --global-property debugModels=true \
   --global-property debugOperations=true \
   | tee out.txt
-
-$generator_cmd generate -i petstore.yaml -g c -o restbed/test/api_test/c_client/generated_src &> /dev/null

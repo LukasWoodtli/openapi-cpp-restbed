@@ -40,10 +40,29 @@ BOOST_AUTO_TEST_CASE(startService)
   });
   thread.detach();
 
+  int status = 0;
+  std::string data;
+
   // localhost:1234/v2/store/inventory/
-  std::string response = requestData(boost::beast::http::verb::get,
+  auto response = requestData(boost::beast::http::verb::get,
                           "/v2/store/inventory/");
-  BOOST_TEST("Hello inventory" == response);
+  status = response.first;
+  data = response.second;
+
+  BOOST_TEST(200 == status);
+  BOOST_TEST("Hello inventory" == data);
+
+  // /store/order/{orderId: .*}/
+  response = requestData(boost::beast::http::verb::get,
+                                     "/v2/store/order/3");
+
+  status = response.first;
+  data = response.second;
+
+  BOOST_TEST(501 == status);
+  BOOST_TEST("Not implemented" == data);
+
+
   storeApi.stopService();
 }
 

@@ -17,6 +17,21 @@ namespace {{this}} {
 
 using namespace {{modelNamespace}};
 
+{{classname}}Exception::{{classname}}Exception(int status_code, std::string what)
+  : m_status(status_code),
+    m_what(what)
+{
+
+}
+int {{classname}}Exception::getStatus() const
+{
+      return m_status;
+}
+const char* {{classname}}Exception::what() const noexcept
+{
+    return m_what.c_str();
+}
+
 {{classname}}::{{classname}}(int const& port)
   : m_service(std::make_shared<restbed::Service>()),
     m_port(port)
@@ -141,12 +156,19 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 			{{/hasHeaderParams}}
 
 			// Change the value of this variable to the appropriate response before sending the response
-			int status_code = 200;
-			std::string result = "successful operation";
+			int status_code = 500;
+			std::string result = "unknown error";
 
-                        std::tie(status_code, result) = handler_{{httpMethod}}(
-                                {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
-                        );
+                        try {
+                                std::tie(status_code, result) =
+                                    handler_{{httpMethod}}(
+                                        {{#allParams}} {{paramName}} {{^-last}},
+                                        {{ / -last}} {{ / allParams}});
+                        }
+                        catch(const {{classname}}Exception& e) {
+                                status_code = e.getStatus();
+                                result = e.what();
+                        }
 
 			{{#responses}}
 			if (status_code == {{code}}) {
@@ -158,6 +180,8 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 				return;
 			}
 			{{/responses}}
+                        session->close(status_code, result, { {"Connection", "close"} });
+                        return;
 
 	{{#hasBodyParam}}
 		});
@@ -207,12 +231,18 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 			{{/hasHeaderParams}}
 
 			// Change the value of this variable to the appropriate response before sending the response
-			int status_code = 200;
-			std::string result = "successful operation";
+			int status_code = 500;
+			std::string result = "unknown error";
 
-                        std::tie(status_code, result) = handler_{{httpMethod}}(
-                                {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
-                        );
+                        try {
+                                std::tie(status_code, result) = handler_{{httpMethod}}(
+                                    {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
+                                );
+                        }
+                        catch(const {{classname}}Exception& e) {
+                                status_code = e.getStatus();
+                                result = e.what();
+                        }
 
 			{{#responses}}
 			if (status_code == {{code}}) {
@@ -227,6 +257,9 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 				return;
 			}
 			{{/responses}}
+                        session->close(status_code, result, { {"Connection", "close"} });
+                        return;
+
 
 	{{#hasBodyParam}}
 		});
@@ -237,13 +270,17 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
         {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
         )
-        { return std::make_pair<int, std::string>(501, "Not implemented"); }
+{
+        throw {{classname}}Exception(501, "Not implemented");
+}
 
 {{#vendorExtensions.x-codegen-other-methods}}
 std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
         {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
         )
-        { return std::make_pair<int, std::string>(501, "Not implemented"); }
+{
+        throw {{classname}}Exception(501, "Not implemented");
+}
 {{/vendorExtensions.x-codegen-other-methods}}
 
 

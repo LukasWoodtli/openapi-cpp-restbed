@@ -11,6 +11,7 @@
 {{{defaultInclude}}}
 #include <memory>
 #include <utility>
+#include <exception>
 
 #include <corvusoft/restbed/session.hpp>
 #include <corvusoft/restbed/resource.hpp>
@@ -24,6 +25,22 @@ namespace {{this}} {
 {{/apiNamespaceDeclarations}}
 
 using namespace {{modelNamespace}};
+
+///
+/// Exception to flag problems in the handlers
+///
+class {{declspec}} {{classname}}Exception: public std::exception
+{
+public:
+      {{classname}}Exception(int status_code, std::string what);
+
+      int getStatus() const;
+      const char* what() const noexcept override;
+
+private:
+      int m_status;
+      std::string m_what;
+};
 
 {{#operation}}
 /// <summary>

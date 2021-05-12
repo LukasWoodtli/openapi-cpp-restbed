@@ -27,7 +27,6 @@ target_link_libraries(api_tests
         PRIVATE
         ${Boost_LIBRARIES}
         restbed-shared
-        c_client
         )
 
 add_test(NAME api_tests COMMAND api_tests)

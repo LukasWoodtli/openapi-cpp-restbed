@@ -14,10 +14,6 @@
 
 #include "beast_client.h"
 
-extern "C" {
-#include "apiClient.h"
-#include "StoreAPI.h"
-}
 
 using namespace ApprovalTests;
 using namespace org::openapitools::server::model;

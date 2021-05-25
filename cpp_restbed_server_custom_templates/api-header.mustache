@@ -55,12 +55,12 @@ public:
     {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
     virtual ~{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
 
-    virtual std::pair<int, std::string> handler_{{httpMethod}}(
+    virtual {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} handler_{{httpMethod}}(
             {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
     );
 
     {{#vendorExtensions.x-codegen-other-methods}}
-    virtual std::pair<int, std::string> handler_{{httpMethod}}(
+    virtual {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} handler_{{httpMethod}}(
             {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
     );
     {{/vendorExtensions.x-codegen-other-methods}}

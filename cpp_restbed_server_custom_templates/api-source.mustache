@@ -8,6 +8,7 @@
 #include <corvusoft/restbed/uri.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "{{classname}}.h"
 
@@ -157,13 +158,21 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
 			// Change the value of this variable to the appropriate response before sending the response
 			int status_code = 500;
-			std::string result = "unknown error";
+                        {{#returnType}}
+                        {{{.}}} resultObject = {{{defaultResponse}}};
+                        {{/returnType}}
+                        std::string result = "";
 
                         try {
-                                std::tie(status_code, result) =
-                                    handler_{{httpMethod}}(
-                                        {{#allParams}} {{paramName}} {{^-last}},
-                                        {{ / -last}} {{ / allParams}});
+                              {{#returnType}}
+                              std::tie(status_code, resultObject) =
+                              {{/returnType}}
+                              {{^returnType}}
+                              status_code =
+                              {{/returnType}}
+                                      handler_{{httpMethod}}(
+                                              {{#allParams}} {{paramName}} {{^-last}},
+                                              {{ / -last}} {{ / allParams}});
                         }
                         catch(const {{classname}}Exception& e) {
                                 status_code = e.getStatus();
@@ -172,6 +181,23 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
 			{{#responses}}
 			if (status_code == {{code}}) {
+                                {{#returnType}}
+                                {{#isModel}}
+                                result = resultObject->toJsonString();
+                                {{/isModel}}
+                                {{#isMap}}
+                                boost::property_tree::ptree pt;
+                                for(const auto &kv: resultObject) {
+                                        pt.push_back(boost::property_tree::ptree::value_type(
+                                              boost::lexical_cast<std::string>(kv.first),
+                                              boost::property_tree::ptree(
+                                                        boost::lexical_cast<std::string>(kv.second))));
+                                }
+                                std::stringstream sstream;
+                                write_json(sstream, pt);
+                                result = sstream.str();
+                                {{/isMap}}
+                                {{/returnType}}
 				{{#headers}}
 				// Description: {{description}}
 				session->set_header("{{baseName}}", ""); // Change second param to your header value
@@ -232,12 +258,21 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
 			// Change the value of this variable to the appropriate response before sending the response
 			int status_code = 500;
-			std::string result = "unknown error";
+                        {{#returnType}}
+                        {{{.}}} resultObject = {{{defaultResponse}}};
+                        {{/returnType}}
+			std::string result = "";
 
                         try {
-                                std::tie(status_code, result) = handler_{{httpMethod}}(
-                                    {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
-                                );
+                                {{#returnType}}
+                                std::tie(status_code, resultObject) =
+                                {{/returnType}}
+                                {{^returnType}}
+                                status_code =
+                                {{/returnType}}
+                                        handler_{{httpMethod}}(
+                                                  {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
+                                              );
                         }
                         catch(const {{classname}}Exception& e) {
                                 status_code = e.getStatus();
@@ -246,9 +281,23 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
 			{{#responses}}
 			if (status_code == {{code}}) {
-				{{#baseType}}
-				std::shared_ptr<{{.}}> response = NULL;
-				{{/baseType}}
+                                {{#returnType}}
+                                {{#isModel}}
+                                result = resultObject->toJsonString();
+                                {{/isModel}}
+                                {{#isMap}}
+                                boost::property_tree::ptree pt;
+                                for(const auto &kv: resultObject) {
+                                        pt.push_back(boost::property_tree::ptree::value_type(
+                                                  boost::lexical_cast<std::string>(kv.first),
+                                                  boost::property_tree::ptree(
+                                                            boost::lexical_cast<std::string>(kv.second))));
+                                }
+                                std::stringstream sstream;
+                                write_json(sstream, pt);
+                                result = sstream.str();
+                                {{/isMap}}
+                                {{/returnType}}
 				{{#headers}}
 				// Description: {{description}}
 				session->set_header("{{baseName}}", ""); // Change second param to your header value
@@ -267,7 +316,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 }
 {{/vendorExtensions.x-codegen-other-methods}}
 
-std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
+{{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
         {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
         )
 {
@@ -275,7 +324,7 @@ std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-n
 }
 
 {{#vendorExtensions.x-codegen-other-methods}}
-std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
+{{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
         {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
         )
 {

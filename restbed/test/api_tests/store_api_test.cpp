@@ -1,11 +1,11 @@
 #define BOOST_TEST_INCLUDED
 #include <boost/test/data/test_case.hpp>
 #include <boost/test/unit_test.hpp>
-
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <boost/beast/http/verb.hpp>
 #include <chrono>
 #include <functional>
-#include <iostream>
 #include <thread>
 
 #include "ApprovalTests.hpp"
@@ -21,11 +21,21 @@ using namespace org::openapitools::server::api;
 
 class MyStoreApiStoreInventoryResource : public StoreApiStoreInventoryResource {
 public:
-  virtual std::pair<int, std::string> handler_GET() override {
-      return std::make_pair<int, std::string>(200, "Hello inventory");
+  virtual std::pair<int, std::map<std::string, int32_t>> handler_GET() override {
+      std::map<std::string, int32_t> map;
+      map["Hello inventory"] = 23;
+      return std::make_pair<int, decltype(map)>(200, std::move(map));
   }
 
 };
+
+std::string formatJson(const std::string& jsonString) {
+  boost::property_tree::ptree pt;
+  std::stringstream sstream(jsonString);
+  read_json(sstream,pt);
+  write_json(sstream, pt);
+  return sstream.str();
+}
 
 BOOST_AUTO_TEST_SUITE(StoreApiTest)
 
@@ -47,10 +57,11 @@ BOOST_AUTO_TEST_CASE(startService)
   auto response = requestData(boost::beast::http::verb::get,
                           "/v2/store/inventory/");
   status = response.first;
-  data = response.second;
+  data = formatJson(response.second);
 
+  const auto expectedJson = formatJson(R"JSON({"Hello inventory": "23"})JSON");
   BOOST_TEST(200 == status);
-  BOOST_TEST("Hello inventory" == data);
+  BOOST_TEST(expectedJson == data);
 
   // /store/order/{orderId: .*}/
   response = requestData(boost::beast::http::verb::get,

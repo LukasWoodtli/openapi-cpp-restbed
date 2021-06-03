@@ -30,12 +30,11 @@ set(GENERATED_SOURCES_INCLUDE_DIRS
 add_library(restbed_example SHARED)
 
 target_include_directories(restbed_example
-        SYSTEM PRIVATE
+        SYSTEM PUBLIC
             ${restbed_SOURCE_DIR}/source)
 target_include_directories(restbed_example
         PUBLIC
             generated_src
-        PRIVATE
             ${GENERATED_SOURCES_INCLUDE_DIRS})
 
 target_sources(restbed_example
@@ -44,7 +43,7 @@ target_sources(restbed_example
         main.cpp)
 
 target_link_libraries(restbed_example
-        PRIVATE
+        PUBLIC
             Boost::system
             restbed-shared)
 

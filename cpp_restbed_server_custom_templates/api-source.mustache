@@ -9,6 +9,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "{{classname}}.h"
 
@@ -109,23 +110,26 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 		[ this ]( const std::shared_ptr<restbed::Session> session, const restbed::Bytes & body )
 		{
 			const auto request = session->get_request();
-			std::string file = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
+			std::string file_ = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
 			/**
 			 * Get body params or form params here from the file string
 			 */
                         {{#allParams}}
-                        std::stringstream sstream(file);
-                        boost::property_tree::ptree pt;
-                        boost::property_tree::json_parser::read_json(sstream,pt);
                         {{#isModel}}
-                        auto {{paramName}} = std::make_shared<{{{baseType}}}>(pt);
+                        std::stringstream {{paramName}}_sstream(file_);
+                        boost::property_tree::ptree {{paramName}}_pt;
+                        boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
+                        auto {{paramName}} = std::make_shared<{{{baseType}}}>({{paramName}}_pt);
+                        {{/isModel}}
                         {{#isArray}}
-                        auto {{paramName}} = std::make_shared<std::vector<{{{baseType}}}>>();
-                        for (const auto& child: pt) {
-                          {{paramName}}->emplace_back(std::make_shared<{{{baseType}}}>(child));
+                        std::stringstream {{paramName}}_sstream(file_);
+                        boost::property_tree::ptree {{paramName}}_pt;
+                        boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
+                        auto {{paramName}} = {{{dataType}}}();
+                        for (const auto& child: {{paramName}}_pt) {
+                              {{paramName}}.emplace_back(std::make_shared<{{{baseType}}}>(child.second));
                         }
                         {{/isArray}}
-                        {{/isModel}}
                         {{/allParams}}
 	                {{/hasBodyParam}}
 
@@ -144,6 +148,11 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 			{{#isPrimitiveType}}
 			const {{{dataType}}} {{{paramName}}} = request->get_query_parameter("{{paramName}}", {{{defaultValue}}});
 			{{/isPrimitiveType}}
+                        {{#isContainer}}
+                        std::string {{{paramName}}}_string = request->get_query_parameter("{{paramName}}", "");
+                        {{{dataType}}} {{{paramName}}};
+                        boost::split({{{paramName}}}, {{{paramName}}}_string, boost::is_any_of(",;"));
+                        {{/isContainer}}
 			{{/queryParams}}
 			{{/hasQueryParams}}
 
@@ -183,7 +192,12 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 			if (status_code == {{code}}) {
                                 {{#returnType}}
                                 {{#isModel}}
+                                {{#isString}}
+                                result = resultObject;
+                                {{/isString}}
+                                {{^isString}}
                                 result = resultObject->toJsonString();
+                                {{/isString}}
                                 {{/isModel}}
                                 {{#isMap}}
                                 boost::property_tree::ptree pt;
@@ -215,6 +229,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 }
 
 {{#vendorExtensions.x-codegen-other-methods}}
+// x-extension
 void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session) {
 
 	const auto request = session->get_request();
@@ -226,7 +241,32 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 		{
 
 			const auto request = session->get_request();
-			std::string file = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
+                        std::string file_ = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
+                        {{#allParams}}
+                        std::stringstream sstream(file_);
+                  {{#allParams}}
+                  {{#isModel}}
+                  std::stringstream {{paramName}}_sstream(file_);
+                  boost::property_tree::ptree {{paramName}}_pt;
+                  boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
+                  auto {{paramName}} = std::make_shared<{{{baseType}}}>({{paramName}}_pt);
+                  {{/isModel}}
+                  {{#isArray}}
+                  std::stringstream {{paramName}}_sstream(file_);
+                  boost::property_tree::ptree {{paramName}}_pt;
+                  boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
+                  auto {{paramName}} = {{{dataType}}}();
+                  for (const auto& child: {{paramName}}_pt) {
+                        {{paramName}}.emplace_back(std::make_shared<{{{baseType}}}>(child));
+                  }
+                  {{/isArray}}
+                  {{^isModel}}
+                  {{^isArray}}
+                  auto {{paramName}} = std::make_shared<{{{baseType}}}>(file_);
+                  {{/isArray}}
+                  {{/isModel}}
+                  {{/allParams}}
+                        {{/allParams}}
 	{{/hasBodyParam}}
 
 			{{#hasPathParams}}

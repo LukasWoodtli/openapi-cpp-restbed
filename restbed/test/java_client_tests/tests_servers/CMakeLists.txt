@@ -1,1 +1,1 @@
-add_subdirectory(default_handlers)
+add_subdirectory(default_unimplemented_server_stubs)

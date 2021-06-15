@@ -1,0 +1,24 @@
+#!/bin/bash
+set -u
+set -e
+set -x
+
+echo Running @TEST_SERVER_EXECUTABLE@
+@TEST_SERVER_EXECUTABLE@ &
+pid=$!
+
+
+function kill_test_server()
+{
+    kill -9 $pid
+}
+
+trap kill_test_server EXIT
+
+echo Running Java client tests
+cd @CMAKE_SOURCE_DIR@/restbed/test/java_client_tests/java_client/
+./gradlew --no-daemon clean test --tests "test_@TARGET_NAME@.*" -i
+
+kill_test_server
+
+echo Done running @TEST_SERVER_EXECUTABLE@

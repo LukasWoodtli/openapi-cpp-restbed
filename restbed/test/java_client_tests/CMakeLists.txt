@@ -1,1 +1,3 @@
+include(defaultUnimplementedServerStubs.cmake)
+
 add_subdirectory(tests_servers)

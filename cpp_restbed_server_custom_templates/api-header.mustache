@@ -53,7 +53,7 @@ private:
 class {{declspec}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource: public restbed::Resource
 {
 public:
-    {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
+  {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(const std::string& context = "{{contextPath}}");
     virtual ~{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
 
     virtual {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} handler_{{httpMethod}}(
@@ -82,21 +82,16 @@ private:
 class {{declspec}} {{classname}}
 {
 public:
-	explicit {{classname}}(int const& port);
-	explicit {{classname}}(std::shared_ptr<restbed::Settings> const& restbedSettings);
-	explicit {{classname}}(std::shared_ptr<restbed::Service> const& restbedService, std::shared_ptr<restbed::Settings> const& restbedSettings);
-	~{{classname}}();
+  explicit {{classname}}(std::shared_ptr<restbed::Service> const& restbedService);
+	virtual ~{{classname}}();
 
         {{#operation}}
-        void set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
+        virtual void set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
         {{/operation}}
 
-        virtual void publishResources();
+        virtual void publishDefaultResources();
 
-        void setRootPath(std::string path);
-
-        virtual void startService();
-        virtual void stopService();
+        virtual std::shared_ptr<restbed::Service> service();
 
 protected:
 	{{#operation}}
@@ -105,8 +100,6 @@ protected:
 
 private:
         std::shared_ptr<restbed::Service> m_service;
-        std::string m_rootPath = "{{contextPath}}";
-        std::shared_ptr<restbed::Settings> m_settings;
 };
 
 

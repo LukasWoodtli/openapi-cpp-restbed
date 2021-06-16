@@ -34,20 +34,9 @@ const char* {{classname}}Exception::what() const noexcept
     return m_what.c_str();
 }
 
-{{classname}}::{{classname}}(int const& port)
-  : {{classname}}(std::make_shared<restbed::Service>(), std::make_shared<restbed::Settings>())
-{
-        m_settings->set_port(port);
-}
 
-{{classname}}::{{classname}}(std::shared_ptr<restbed::Settings> const& restbedSettings)
-  : {{classname}}(std::make_shared<restbed::Service>(), restbedSettings)
-{
-}
-
-{{classname}}::{{classname}}(std::shared_ptr<restbed::Service> const& restbedService, std::shared_ptr<restbed::Settings> const& restbedSettings)
-  : m_service(restbedService),
-    m_settings(restbedSettings)
+{{classname}}::{{classname}}(std::shared_ptr<restbed::Service> const& restbedService)
+  : m_service(restbedService)
 {
 }
 
@@ -56,38 +45,28 @@ const char* {{classname}}Exception::what() const noexcept
 {{#operation}}
 void {{classname}}::set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource) {
         m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;
+        m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
 }
 {{/operation}}
 
 
-void {{classname}}::publishResources() {
+void {{classname}}::publishDefaultResources() {
 
         {{#operation}}
         if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource)
-            m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>();
-        m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
+            set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>());
+
         {{/operation}}
 }
 
-void {{classname}}::setRootPath(std::string path) {
-        m_rootPath = path;
-}
-
-void {{classname}}::startService() {
-
-        publishResources();
-        m_settings->set_root(m_rootPath);
-        m_service->start(m_settings);
-}
-
-void {{classname}}::stopService() {
-        m_service->stop();
+std::shared_ptr<restbed::Service> {{classname}}::service() {
+        return m_service;
 }
 
 {{#operation}}
-{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource()
+{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(const std::string& context /* = "{{contextPath}}" */)
 {
-	this->set_path("{{path}}");
+	this->set_path(context + "{{path}}");
 	this->set_method_handler("{{httpMethod}}",
 		std::bind(&{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal, this,
 			std::placeholders::_1));

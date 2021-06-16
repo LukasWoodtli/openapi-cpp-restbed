@@ -3,14 +3,14 @@ package test_default_unimplemented_server_stubs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openapi.example.api.PetApi;
-import org.openapi.example.invoker.ApiClient;
 import org.openapi.example.model.Pet;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static test_default_unimplemented_server_stubs.TestingHelper.approveException;
+import static helper.ApiClientFactories.setUpPetApi;
+import static helper.TestingHelper.approveException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PetApiTest {
 
@@ -18,9 +18,7 @@ class PetApiTest {
 
     @BeforeEach
     void setUp() {
-        ApiClient defaultClient = new ApiClient();
-        defaultClient.setBasePath("http://localhost:1234/v2");
-        apiInstance = new PetApi(defaultClient);
+        apiInstance = setUpPetApi();
     }
 
     @Test

@@ -7,8 +7,9 @@ import org.openapi.example.model.Order;
 import org.openapi.example.invoker.ApiClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import static helper.ApiClientFactories.setUpStoreApi;
 import static org.junit.jupiter.api.Assertions.*;
-import static test_default_unimplemented_server_stubs.TestingHelper.approveException;
+import static helper.TestingHelper.approveException;
 
 class StoreApiTest {
 
@@ -16,9 +17,7 @@ class StoreApiTest {
 
     @BeforeEach
     void setUp() {
-        ApiClient defaultClient = new ApiClient();
-        defaultClient.setBasePath("http://localhost:1234/v2");
-        apiInstance = new StoreApi(defaultClient);
+        apiInstance = setUpStoreApi();
     }
 
     @Test

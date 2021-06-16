@@ -9,8 +9,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.Arrays;
 
+import static helper.ApiClientFactories.setUpUserApi;
 import static org.junit.jupiter.api.Assertions.*;
-import static test_default_unimplemented_server_stubs.TestingHelper.approveException;
+import static helper.TestingHelper.approveException;
 
 class UserApiTest {
 
@@ -18,9 +19,7 @@ class UserApiTest {
 
     @BeforeEach
     void setUp() {
-        ApiClient defaultClient = new ApiClient();
-        defaultClient.setBasePath("http://localhost:1234/v2");
-        apiInstance = new UserApi(defaultClient);
+        apiInstance = setUpUserApi();
     }
 
     @Test

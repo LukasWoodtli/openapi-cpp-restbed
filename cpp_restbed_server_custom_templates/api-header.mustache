@@ -16,6 +16,7 @@
 #include <corvusoft/restbed/session.hpp>
 #include <corvusoft/restbed/resource.hpp>
 #include <corvusoft/restbed/service.hpp>
+#include <corvusoft/restbed/settings.hpp>
 
 {{#imports}}{{{import}}}
 {{/imports}}
@@ -82,6 +83,8 @@ class {{declspec}} {{classname}}
 {
 public:
 	explicit {{classname}}(int const& port);
+	explicit {{classname}}(std::shared_ptr<restbed::Settings> const& restbedSettings);
+	explicit {{classname}}(std::shared_ptr<restbed::Service> const& restbedService, std::shared_ptr<restbed::Settings> const& restbedSettings);
 	~{{classname}}();
 
         {{#operation}}
@@ -91,8 +94,6 @@ public:
         virtual void publishResources();
 
         void setRootPath(std::string path);
-
-        std::shared_ptr<restbed::Settings> createSettings();
 
         virtual void startService();
         virtual void stopService();
@@ -105,7 +106,7 @@ protected:
 private:
         std::shared_ptr<restbed::Service> m_service;
         std::string m_rootPath = "{{contextPath}}";
-        int const m_port = 0;
+        std::shared_ptr<restbed::Settings> m_settings;
 };
 
 

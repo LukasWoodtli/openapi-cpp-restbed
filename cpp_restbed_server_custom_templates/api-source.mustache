@@ -35,8 +35,19 @@ const char* {{classname}}Exception::what() const noexcept
 }
 
 {{classname}}::{{classname}}(int const& port)
-  : m_service(std::make_shared<restbed::Service>()),
-    m_port(port)
+  : {{classname}}(std::make_shared<restbed::Service>(), std::make_shared<restbed::Settings>())
+{
+        m_settings->set_port(port);
+}
+
+{{classname}}::{{classname}}(std::shared_ptr<restbed::Settings> const& restbedSettings)
+  : {{classname}}(std::make_shared<restbed::Service>(), restbedSettings)
+{
+}
+
+{{classname}}::{{classname}}(std::shared_ptr<restbed::Service> const& restbedService, std::shared_ptr<restbed::Settings> const& restbedSettings)
+  : m_service(restbedService),
+    m_settings(restbedSettings)
 {
 }
 
@@ -53,7 +64,7 @@ void {{classname}}::publishResources() {
 
         {{#operation}}
         if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource)
-        m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>();
+            m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>();
         m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
         {{/operation}}
 }
@@ -62,20 +73,11 @@ void {{classname}}::setRootPath(std::string path) {
         m_rootPath = path;
 }
 
-std::shared_ptr<restbed::Settings> {{classname}}::createSettings()
-{
-        std::shared_ptr<restbed::Settings> settings = std::make_shared<restbed::Settings>();
-        settings->set_port(m_port);
-        settings->set_root(m_rootPath);
-        return settings;
-}
-
 void {{classname}}::startService() {
 
         publishResources();
-        std::shared_ptr<restbed::Settings> settings = createSettings();
-
-        m_service->start(settings);
+        m_settings->set_root(m_rootPath);
+        m_service->start(m_settings);
 }
 
 void {{classname}}::stopService() {

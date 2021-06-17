@@ -56,26 +56,6 @@ class UserApiTest {
     }
 
     @Test
-    void deleteUser() {
-        var exception = assertThrows(
-                WebClientResponseException.class, () -> {
-                    apiInstance.deleteUser("my name").block();
-                });
-
-        approveException(exception);
-    }
-
-    @Test
-    void getUserByName() {
-        var exception = assertThrows(
-                WebClientResponseException.class, () -> {
-                    apiInstance.getUserByName("my name").block();
-                });
-
-        approveException(exception);
-    }
-
-    @Test
     void loginUser() {
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {

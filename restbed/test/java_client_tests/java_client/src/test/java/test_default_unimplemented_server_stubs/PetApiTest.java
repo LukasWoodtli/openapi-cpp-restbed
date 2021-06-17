@@ -43,26 +43,6 @@ class PetApiTest {
     }
 
     @Test
-    void findPetsByStatus() {
-        var exception = assertThrows(
-                WebClientResponseException.class, () -> {
-                    apiInstance.findPetsByStatus(Arrays.asList("hello")).blockFirst();
-                });
-
-        approveException(exception);
-    }
-
-    @Test
-    void findPetsByTags() {
-        var exception = assertThrows(
-                WebClientResponseException.class, () -> {
-                    apiInstance.findPetsByTags(Arrays.asList("hello Tag")).blockFirst();
-                });
-
-        approveException(exception);
-    }
-
-    @Test
     void getPetById() {
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {

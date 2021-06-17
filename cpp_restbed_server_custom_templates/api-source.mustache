@@ -35,34 +35,6 @@ const char* {{classname}}Exception::what() const noexcept
 }
 
 
-{{classname}}::{{classname}}(std::shared_ptr<restbed::Service> const& restbedService)
-  : m_service(restbedService)
-{
-}
-
-{{classname}}::~{{classname}}() {}
-
-{{#operation}}
-void {{classname}}::set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource) {
-        m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;
-        m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
-}
-{{/operation}}
-
-
-void {{classname}}::publishDefaultResources() {
-
-        {{#operation}}
-        if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource)
-            set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>());
-
-        {{/operation}}
-}
-
-std::shared_ptr<restbed::Service> {{classname}}::service() {
-        return m_service;
-}
-
 {{#operation}}
 {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(const std::string& context /* = "{{contextPath}}" */)
 {
@@ -356,8 +328,39 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
 {{/operation}}
 
+{{classname}}::{{classname}}(std::shared_ptr<restbed::Service> const& restbedService)
+: m_service(restbedService)
+{
+}
+
+{{classname}}::~{{classname}}() {}
+
+{{#operation}}
+void {{classname}}::set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource) {
+  m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;
+  m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
+}
+{{/operation}}
+
+
+void {{classname}}::publishDefaultResources() {
+
+  {{#operation}}
+  if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource)
+    set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>());
+
+  {{/operation}}
+}
+
+std::shared_ptr<restbed::Service> {{classname}}::service() {
+  return m_service;
+}
+
+
 {{#apiNamespaceDeclarations}}
 }
 {{/apiNamespaceDeclarations}}
 
 {{/operations}}
+
+

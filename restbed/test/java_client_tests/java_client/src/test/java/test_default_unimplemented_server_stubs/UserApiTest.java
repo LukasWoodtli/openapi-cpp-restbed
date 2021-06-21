@@ -3,7 +3,6 @@ package test_default_unimplemented_server_stubs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openapi.example.api.UserApi;
-import org.openapi.example.invoker.ApiClient;
 import org.openapi.example.model.User;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -19,7 +18,7 @@ class UserApiTest {
 
     @BeforeEach
     void setUp() {
-        apiInstance = setUpUserApi();
+        apiInstance = setUpUserApi(1234);
     }
 
     @Test

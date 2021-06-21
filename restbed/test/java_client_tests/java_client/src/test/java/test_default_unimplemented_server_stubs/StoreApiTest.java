@@ -17,7 +17,7 @@ class StoreApiTest {
 
     @BeforeEach
     void setUp() {
-        apiInstance = setUpStoreApi();
+        apiInstance = setUpStoreApi(1234);
     }
 
     @Test

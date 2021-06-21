@@ -6,7 +6,6 @@ import org.openapi.example.api.PetApi;
 import org.openapi.example.model.Pet;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.util.Arrays;
 
 import static helper.ApiClientFactories.setUpPetApi;
 import static helper.TestingHelper.approveException;
@@ -18,7 +17,7 @@ class PetApiTest {
 
     @BeforeEach
     void setUp() {
-        apiInstance = setUpPetApi();
+        apiInstance = setUpPetApi(1234);
     }
 
     @Test

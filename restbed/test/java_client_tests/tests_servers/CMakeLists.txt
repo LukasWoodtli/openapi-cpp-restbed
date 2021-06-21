@@ -1,1 +1,2 @@
 add_subdirectory(default_unimplemented_server_stubs)
+add_subdirectory(simple_server_stubs)

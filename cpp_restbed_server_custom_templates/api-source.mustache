@@ -169,7 +169,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 				// Description: {{description}}
 				session->set_header("{{baseName}}", ""); // Change second param to your header value
 				{{/headers}}
-				session->close({{code}}, result.empty() ? "{{message}}" : std::move(result), { {"Connection", "close"} });
+				session->close({{code}}, result.empty() ? "{{message}}" : std::move(result), { {"Connection", "close"}, {"Content-Type", "application/json"} });
 				return;
 			}
 			{{/responses}}
@@ -295,7 +295,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 				// Description: {{description}}
 				session->set_header("{{baseName}}", ""); // Change second param to your header value
 				{{/headers}}
-				session->close({{code}}, result.empty() ? "{{message}}" : std::move(result), { {"Connection", "close"} });
+				session->close({{code}}, result.empty() ? "{{message}}" : std::move(result), { {"Connection", "close"}, {"Content-Type", "application/json"} });
 				return;
 			}
 			{{/responses}}

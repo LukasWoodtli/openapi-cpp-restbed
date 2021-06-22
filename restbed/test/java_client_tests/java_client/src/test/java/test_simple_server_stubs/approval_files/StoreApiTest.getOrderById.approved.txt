@@ -1,0 +1,28 @@
+{
+  "id" : 123,
+  "petId" : 4444,
+  "quantity" : 3,
+  "shipDate" : {
+    "offset" : {
+      "totalSeconds" : 0,
+      "id" : "Z",
+      "rules" : {
+        "fixedOffset" : true,
+        "transitions" : [ ],
+        "transitionRules" : [ ]
+      }
+    },
+    "year" : 2011,
+    "monthValue" : 9,
+    "dayOfMonth" : 21,
+    "hour" : 17,
+    "minute" : 32,
+    "second" : 28,
+    "nano" : 0,
+    "dayOfWeek" : "WEDNESDAY",
+    "dayOfYear" : 264,
+    "month" : "SEPTEMBER"
+  },
+  "status" : "placed",
+  "complete" : false
+}

@@ -34,10 +34,6 @@ class PetApiTest {
     }
 
     @Test
-    void findPetsByTags() {
-    }
-
-    @Test
     void getPetById() {
         var responsePet = apiInstance.getPetById(99L).block();
         approveResponseAsJson(responsePet);

@@ -1,0 +1,28 @@
+{
+  "id" : 9876,
+  "petId" : 0,
+  "quantity" : 0,
+  "shipDate" : {
+    "offset" : {
+      "totalSeconds" : 0,
+      "id" : "Z",
+      "rules" : {
+        "fixedOffset" : true,
+        "transitions" : [ ],
+        "transitionRules" : [ ]
+      }
+    },
+    "year" : 2011,
+    "monthValue" : 1,
+    "dayOfMonth" : 12,
+    "hour" : 23,
+    "minute" : 24,
+    "second" : 2,
+    "nano" : 0,
+    "dayOfWeek" : "WEDNESDAY",
+    "dayOfYear" : 12,
+    "month" : "JANUARY"
+  },
+  "status" : "placed",
+  "complete" : false
+}

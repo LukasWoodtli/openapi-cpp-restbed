@@ -3,6 +3,7 @@ package helper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.approvaltests.Approvals;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 public class TestingHelper {
@@ -13,6 +14,13 @@ public class TestingHelper {
         Approvals.verify(message);
     }
 
+    public static void approveException(WebClientRequestException exception) {
+        var message = "URI: " + exception.getUri() +
+                "\nMethod: " + exception.getMethod () +
+                "\nHeaders: " + exception.getHeaders() +
+                "\nMessage: " + exception.getMessage();
+        Approvals.verify(message);
+    }
 
     public static void approveResponseAsJson(Object reponseObject) {
         ObjectMapper objectMapper = new ObjectMapper();

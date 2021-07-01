@@ -47,6 +47,20 @@ raiseErrorForTesting(const std::shared_ptr<RETURN_T> &modelObj,
   return std::make_pair(500, modelObj);
 }
 
+std::string intToErrorRaisingString(const int64_t &id) {
+  std::string errorType;
+  switch(id) {
+  case 9100:  errorType = "ThrowsApiException";
+  break;
+  case 9200:  errorType = "ThrowsStdExceptionDerivedException";
+  break;
+  case 9300:  errorType = "ThrowsInt";
+  break;
+  default: errorType = RETURN_STATUS + std::to_string(id);
+  }
+  return errorType;
+}
+
 } // namespace
 
 class MyPetApiPetResource : public PetApiPetResource {
@@ -59,11 +73,12 @@ public:
     return raiseErrorForTesting<Pet, PetApiException>(pet, name);
   }
 
-  /*
   std::pair<int, std::shared_ptr<Pet>>
-  handler_PUT(const std::shared_ptr<Pet> &Pet) override {
-    return std::make_pair(200, Pet);
-  }*/
+  handler_PUT(const std::shared_ptr<Pet> &pet) override {
+    const std::string &name = pet->getName();
+
+    return raiseErrorForTesting<Pet, PetApiException>(pet, name);
+  }
 };
 
 class MyPetApiPetPetIdResource : public PetApiPetPetIdResource {
@@ -74,10 +89,16 @@ public:
     return status;
   }
 
-  /*std::pair<int, std::shared_ptr<Pet>>
-  handler_GET(const int64_t &petId) override {
-    return PetApiPetPetIdResource::handler_GET(petId);
-  }*/
+  std::pair<int, std::shared_ptr<Pet>>
+  handler_GET(const int64_t &id) override {
+    std::string errorType = intToErrorRaisingString(id);
+
+    auto pet = std::make_shared<Pet>();
+    pet->setName("MyPuppy");
+    pet->setStatus("available");
+
+    return raiseErrorForTesting<Pet, PetApiException>(pet, errorType);
+  }
 };
 
 int main() {

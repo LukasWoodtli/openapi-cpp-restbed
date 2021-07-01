@@ -1,11 +1,9 @@
 package test_error_handling_server_stubs;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openapi.example.api.PetApi;
 import org.openapi.example.model.Pet;
-import org.springframework.web.reactive.function.client.UnknownHttpStatusCodeException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import static helper.ApiClientFactories.setUpPetApi;
@@ -63,10 +61,12 @@ class PetApiTest {
         var pet = new Pet();
         pet.name("ThrowsInt");
         pet.status(Pet.StatusEnum.AVAILABLE);
-        assertThrows(
-                UnknownHttpStatusCodeException.class, () -> {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
                     apiInstance.addPet(pet).block();
                 });
+
+        approveException(exception);
     }
 
     @Test
@@ -111,7 +111,6 @@ class PetApiTest {
     }
 
     @Test
-    @Disabled
     void deletePetThrowsInt() {
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
@@ -125,13 +124,168 @@ class PetApiTest {
         apiInstance.deletePet(1342L, "ReturnsStatus200").block();
     }
 
-
-
     @Test
-    void getPetById() {
+    void deletePetReturnsStatus400() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.deletePet(1342L, "ReturnsStatus400").block();
+                });
+        approveException(exception);
     }
 
     @Test
-    void updatePet() {
+    void deletePetReturnsStatus300() {
+        apiInstance.deletePet(1342L, "ReturnsStatus300").block();
+    }
+
+    @Test
+    void getPetByIdThrowsApiException() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.getPetById(9100L).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void getPetByIdThrowsStdExceptionDerivedException() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.getPetById(9200L).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void getPetByIdThrowsInt() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.getPetById(9300L).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void getPetByIdReturnsStatus200() {
+        var pet = apiInstance.getPetById(200L).block();
+        approveResponseAsJson(pet);
+    }
+
+    @Test
+    void getPetByIdReturnsStatus300() {
+        var pet = apiInstance.getPetById(300L).block();
+        assertNull(pet);
+    }
+
+    @Test
+    void getPetByIdReturnsStatus400() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.getPetById(400L).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void getPetByIdReturnsStatus404() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.getPetById(404L).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void updatePetThrowsApiException() {
+        var pet = new Pet();
+        pet.name("ThrowsApiException");
+        pet.status(Pet.StatusEnum.SOLD);
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.updatePet(pet).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void updatePetThrowsStdExceptionDerivedException() {
+        var pet = new Pet();
+        pet.name("ThrowsStdExceptionDerivedException");
+        pet.status(Pet.StatusEnum.SOLD);
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.updatePet(pet).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void updatePetThrowsInt() {
+        var pet = new Pet();
+        pet.name("ThrowsInt");
+        pet.status(Pet.StatusEnum.SOLD);
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.updatePet(pet).block();
+                });
+        approveException(exception);
+    }
+
+
+    @Test
+    void updatePetReturnsStatus400() {
+        var pet = new Pet();
+        pet.name("ReturnsStatus400");
+        pet.status(Pet.StatusEnum.SOLD);
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.updatePet(pet).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void updatePetReturnsStatus300() {
+        var pet = new Pet();
+        pet.name("ReturnsStatus300");
+        pet.status(Pet.StatusEnum.SOLD);
+
+        var resp = apiInstance.updatePet(pet).block();
+        assertNull(resp);
+    }
+
+    @Test
+    void updatePetReturnsStatus404() {
+        var pet = new Pet();
+        pet.name("ReturnsStatus404");
+        pet.status(Pet.StatusEnum.SOLD);
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.updatePet(pet).block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void updatePetReturnsStatus405() {
+        var pet = new Pet();
+        pet.name("ReturnsStatus405");
+        pet.status(Pet.StatusEnum.SOLD);
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.updatePet(pet).block();
+                });
+        approveException(exception);
+    }
+    @Test
+    void updatePetReturnsStatus500() {
+        var pet = new Pet();
+        pet.name("ReturnsStatus500");
+        pet.status(Pet.StatusEnum.SOLD);
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.updatePet(pet).block();
+                });
+        approveException(exception);
     }
 }

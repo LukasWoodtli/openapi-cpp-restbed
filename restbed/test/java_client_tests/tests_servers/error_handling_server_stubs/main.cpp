@@ -66,7 +66,19 @@ public:
   }*/
 };
 
+class MyPetApiPetPetIdResource : public PetApiPetPetIdResource {
+public:
+  int handler_DELETE(const int64_t &petId,
+                     const std::string &api_key) override {
+    auto [status, pet] = raiseErrorForTesting<Pet, PetApiException>(std::make_shared<Pet>(), api_key);
+    return status;
+  }
 
+  /*std::pair<int, std::shared_ptr<Pet>>
+  handler_GET(const int64_t &petId) override {
+    return PetApiPetPetIdResource::handler_GET(petId);
+  }*/
+};
 
 int main() {
   signal(SIGINT,sig_handler);
@@ -75,7 +87,7 @@ int main() {
 
   auto petApi = PetApi(service);
   petApi.setPetApiPetResource(std::make_shared<MyPetApiPetResource>());
-  //petApi.setPetApiPetPetIdResource(std::make_shared<MyPetApiPetPetIdResource>());
+  petApi.setPetApiPetPetIdResource(std::make_shared<MyPetApiPetPetIdResource>());
 
   const auto settings = std::make_shared<restbed::Settings>();
   settings->set_port(1236);

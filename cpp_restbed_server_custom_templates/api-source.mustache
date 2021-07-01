@@ -113,7 +113,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 			// Getting the headers
 			{{#headerParams}}
 			{{#isPrimitiveType}}
-			const {{{dataType}}} {{{paramName}}} = request->get_header("{{paramName}}", {{{defaultValue}}});
+                        const {{{dataType}}} {{{paramName}}} = request->get_header("{{baseName}}", {{{defaultValue}}});
 			{{/isPrimitiveType}}
 			{{/headerParams}}
 			{{/hasHeaderParams}}
@@ -244,7 +244,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 			// Getting the headers
 			{{#headerParams}}
 			{{#isPrimitiveType}}
-			const {{{dataType}}} {{{paramName}}} = request->get_header("{{paramName}}", {{{defaultValue}}});
+			const {{{dataType}}} {{{paramName}}} = request->get_header("{{baseName}}", {{{defaultValue}}});
 			{{/isPrimitiveType}}
 			{{/headerParams}}
 			{{/hasHeaderParams}}

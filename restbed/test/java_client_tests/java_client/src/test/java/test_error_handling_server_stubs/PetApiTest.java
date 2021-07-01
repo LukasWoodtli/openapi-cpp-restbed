@@ -1,6 +1,7 @@
 package test_error_handling_server_stubs;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openapi.example.api.PetApi;
 import org.openapi.example.model.Pet;
@@ -34,7 +35,7 @@ class PetApiTest {
     }
 
     @Test
-    void addPetThatThrowsPetApiException() {
+    void addPetThatThrowsApiException() {
         var pet = new Pet();
         pet.name("ThrowsApiException");
         pet.status(Pet.StatusEnum.SOLD);
@@ -92,8 +93,39 @@ class PetApiTest {
     }
 
     @Test
-    void deletePet() {
+    void deletePetThrowsApiException() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.deletePet(1342L, "ThrowsApiException").block();
+                });
+        approveException(exception);
     }
+
+    @Test
+    void deletePetThrowsStdExceptionDerivedException() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.deletePet(1342L, "ThrowsStdExceptionDerivedException").block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    @Disabled
+    void deletePetThrowsInt() {
+        var exception = assertThrows(
+                WebClientResponseException.class, () -> {
+                    apiInstance.deletePet(1342L, "ThrowsInt").block();
+                });
+        approveException(exception);
+    }
+
+    @Test
+    void deletePetReturnsStatus200() {
+        apiInstance.deletePet(1342L, "ReturnsStatus200").block();
+    }
+
+
 
     @Test
     void getPetById() {

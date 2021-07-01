@@ -59,134 +59,133 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 	{{#hasBodyParam}}
 	// Body params are present, therefore we have to fetch them
 	int content_length = request->get_header("Content-Length", 0);
+        std::string file_;
 	session->fetch(content_length,
-		[ this ]( const std::shared_ptr<restbed::Session> session, const restbed::Bytes & body )
+		[ &file_ ]( const std::shared_ptr<restbed::Session> session, const restbed::Bytes & body )
 		{
 			const auto request = session->get_request();
-			std::string file_ = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
-			/**
-			 * Get body params or form params here from the file string
-			 */
-                        {{#allParams}}
-                        {{#isModel}}
-                        std::stringstream {{paramName}}_sstream(file_);
-                        boost::property_tree::ptree {{paramName}}_pt;
-                        boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
-                        auto {{paramName}} = std::make_shared<{{{baseType}}}>({{paramName}}_pt);
-                        {{/isModel}}
-                        {{#isArray}}
-                        std::stringstream {{paramName}}_sstream(file_);
-                        boost::property_tree::ptree {{paramName}}_pt;
-                        boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
-                        auto {{paramName}} = {{{dataType}}}();
-                        for (const auto& child: {{paramName}}_pt) {
-                              {{paramName}}.emplace_back(std::make_shared<{{{baseType}}}>(child.second));
-                        }
-                        {{/isArray}}
-                        {{/allParams}}
-	                {{/hasBodyParam}}
+			file_ = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
+                });
 
-			{{#hasPathParams}}
-			// Getting the path params
-			{{#pathParams}}
-			{{#isPrimitiveType}}
-			const {{{dataType}}} {{{paramName}}} = request->get_path_parameter("{{paramName}}", {{{defaultValue}}});
-			{{/isPrimitiveType}}
-			{{/pathParams}}
-			{{/hasPathParams}}
+                /**
+                 * Get body params or form params here from the file string
+                 */
+                {{#allParams}}
+                {{#isModel}}
+                std::stringstream {{paramName}}_sstream(file_);
+                boost::property_tree::ptree {{paramName}}_pt;
+                boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
+                auto {{paramName}} = std::make_shared<{{{baseType}}}>({{paramName}}_pt);
+                {{/isModel}}
+                {{#isArray}}
+                std::stringstream {{paramName}}_sstream(file_);
+                boost::property_tree::ptree {{paramName}}_pt;
+                boost::property_tree::json_parser::read_json({{paramName}}_sstream, {{paramName}}_pt);
+                auto {{paramName}} = {{{dataType}}}();
+                for (const auto& child: {{paramName}}_pt) {
+                      {{paramName}}.emplace_back(std::make_shared<{{{baseType}}}>(child.second));
+                }
+                {{/isArray}}
+                {{/allParams}}
+                {{/hasBodyParam}}
 
-			{{#hasQueryParams}}
-			// Getting the query params
-			{{#queryParams}}
-			{{#isPrimitiveType}}
-			const {{{dataType}}} {{{paramName}}} = request->get_query_parameter("{{paramName}}", {{{defaultValue}}});
-			{{/isPrimitiveType}}
-                        {{#isContainer}}
-                        std::string {{{paramName}}}_string = request->get_query_parameter("{{paramName}}", "");
-                        {{{dataType}}} {{{paramName}}};
-                        boost::split({{{paramName}}}, {{{paramName}}}_string, boost::is_any_of(",;"));
-                        {{/isContainer}}
-			{{/queryParams}}
-			{{/hasQueryParams}}
+                {{#hasPathParams}}
+                // Getting the path params
+                {{#pathParams}}
+                {{#isPrimitiveType}}
+                const {{{dataType}}} {{{paramName}}} = request->get_path_parameter("{{paramName}}", {{{defaultValue}}});
+                {{/isPrimitiveType}}
+                {{/pathParams}}
+                {{/hasPathParams}}
 
-			{{#hasHeaderParams}}
-			// Getting the headers
-			{{#headerParams}}
-			{{#isPrimitiveType}}
-                        const {{{dataType}}} {{{paramName}}} = request->get_header("{{baseName}}", {{{defaultValue}}});
-			{{/isPrimitiveType}}
-			{{/headerParams}}
-			{{/hasHeaderParams}}
+                {{#hasQueryParams}}
+                // Getting the query params
+                {{#queryParams}}
+                {{#isPrimitiveType}}
+                const {{{dataType}}} {{{paramName}}} = request->get_query_parameter("{{paramName}}", {{{defaultValue}}});
+                {{/isPrimitiveType}}
+                {{#isContainer}}
+                std::string {{{paramName}}}_string = request->get_query_parameter("{{paramName}}", "");
+                {{{dataType}}} {{{paramName}}};
+                boost::split({{{paramName}}}, {{{paramName}}}_string, boost::is_any_of(",;"));
+                {{/isContainer}}
+                {{/queryParams}}
+                {{/hasQueryParams}}
 
-			// Change the value of this variable to the appropriate response before sending the response
-			int status_code = 500;
+                {{#hasHeaderParams}}
+                // Getting the headers
+                {{#headerParams}}
+                {{#isPrimitiveType}}
+                const {{{dataType}}} {{{paramName}}} = request->get_header("{{baseName}}", {{{defaultValue}}});
+                {{/isPrimitiveType}}
+                {{/headerParams}}
+                {{/hasHeaderParams}}
+
+                // Change the value of this variable to the appropriate response before sending the response
+                int status_code = 500;
+                {{#returnType}}
+                {{{.}}} resultObject = {{{defaultResponse}}};
+                {{/returnType}}
+                std::string result = "";
+
+                try {
+                      {{#returnType}}
+                      std::tie(status_code, resultObject) =
+                      {{/returnType}}
+                      {{^returnType}}
+                      status_code =
+                      {{/returnType}}
+                              handler_{{httpMethod}}(
+                                      {{#allParams}} {{paramName}} {{^-last}},
+                                      {{ / -last}} {{ / allParams}});
+                }
+                catch(const {{classname}}Exception& e) {
+                        status_code = e.getStatus();
+                        result = e.what();
+                }
+                catch(const std::exception& e) {
+                  status_code = 500;
+                  result = e.what();
+                }
+                catch(...) {
+                  status_code = 500;
+                  result = "Unknown exception occured";
+                }
+
+                {{#responses}}
+                if (status_code == {{code}}) {
                         {{#returnType}}
-                        {{{.}}} resultObject = {{{defaultResponse}}};
+                        {{#isModel}}
+                        {{#isString}}
+                        result = resultObject;
+                        {{/isString}}
+                        {{^isString}}
+                        result = resultObject->toJsonString();
+                        {{/isString}}
+                        {{/isModel}}
+                        {{#isMap}}
+                        boost::property_tree::ptree pt;
+                        for(const auto &kv: resultObject) {
+                                pt.push_back(boost::property_tree::ptree::value_type(
+                                      boost::lexical_cast<std::string>(kv.first),
+                                      boost::property_tree::ptree(
+                                                boost::lexical_cast<std::string>(kv.second))));
+                        }
+                        std::stringstream sstream;
+                        write_json(sstream, pt);
+                        result = sstream.str();
+                        {{/isMap}}
                         {{/returnType}}
-                        std::string result = "";
-
-                        try {
-                              {{#returnType}}
-                              std::tie(status_code, resultObject) =
-                              {{/returnType}}
-                              {{^returnType}}
-                              status_code =
-                              {{/returnType}}
-                                      handler_{{httpMethod}}(
-                                              {{#allParams}} {{paramName}} {{^-last}},
-                                              {{ / -last}} {{ / allParams}});
-                        }
-                        catch(const {{classname}}Exception& e) {
-                                status_code = e.getStatus();
-                                result = e.what();
-                        }
-                        catch(const std::exception& e) {
-                          status_code = 500;
-                          result = e.what();
-                        }
-                        catch(...) {
-                          status_code = 500;
-                          result = "Unknown exception occured";
-                        }
-
-			{{#responses}}
-			if (status_code == {{code}}) {
-                                {{#returnType}}
-                                {{#isModel}}
-                                {{#isString}}
-                                result = resultObject;
-                                {{/isString}}
-                                {{^isString}}
-                                result = resultObject->toJsonString();
-                                {{/isString}}
-                                {{/isModel}}
-                                {{#isMap}}
-                                boost::property_tree::ptree pt;
-                                for(const auto &kv: resultObject) {
-                                        pt.push_back(boost::property_tree::ptree::value_type(
-                                              boost::lexical_cast<std::string>(kv.first),
-                                              boost::property_tree::ptree(
-                                                        boost::lexical_cast<std::string>(kv.second))));
-                                }
-                                std::stringstream sstream;
-                                write_json(sstream, pt);
-                                result = sstream.str();
-                                {{/isMap}}
-                                {{/returnType}}
-				{{#headers}}
-				// Description: {{description}}
-				session->set_header("{{baseName}}", ""); // Change second param to your header value
-				{{/headers}}
-				session->close({{code}}, result.empty() ? "{{message}}" : std::move(result), { {"Connection", "close"}, {"Content-Type", "application/json"} });
-				return;
-			}
-			{{/responses}}
-                        session->close(status_code, result, { {"Connection", "close"} });
+                        {{#headers}}
+                        // Description: {{description}}
+                        session->set_header("{{baseName}}", ""); // Change second param to your header value
+                        {{/headers}}
+                        session->close({{code}}, result.empty() ? "{{message}}" : std::move(result), { {"Connection", "close"}, {"Content-Type", "application/json"} });
                         return;
-
-	{{#hasBodyParam}}
-		});
-	{{/hasBodyParam}}
+                }
+                {{/responses}}
+                session->close(status_code, result, { {"Connection", "close"} });
+                return;
 }
 
 {{#vendorExtensions.x-codegen-other-methods}}

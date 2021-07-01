@@ -22,3 +22,12 @@ $generator_cmd generate \
   --global-property debugModels=true \
   --global-property debugOperations=true \
   | tee out.txt
+
+diff -r restbed/generated_src restbed/generated_src_reference
+if [ $? -eq 0 ]
+then
+  echo Output is same
+else
+  echo Running meld
+  meld restbed/generated_src restbed/generated_src_reference
+fi

@@ -5,3 +5,5 @@ cpp_restbed_server_original_templates/
 out.txt
 pistache_server_templates/
 *.received.txt
+
+restbed/generated_src_reference/

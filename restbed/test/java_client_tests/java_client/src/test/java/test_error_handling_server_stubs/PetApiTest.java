@@ -7,8 +7,7 @@ import org.openapi.example.model.Pet;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import static helper.ApiClientFactories.setUpPetApi;
-import static helper.TestingHelper.approveException;
-import static helper.TestingHelper.approveResponseAsJson;
+import static helper.TestingHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PetApiTest {
@@ -140,57 +139,64 @@ class PetApiTest {
 
     @Test
     void getPetByIdThrowsApiException() {
+        var id = errorRaisingStringToInt("ThrowsApiException");
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
-                    apiInstance.getPetById(9100L).block();
+                    apiInstance.getPetById(id).block();
                 });
         approveException(exception);
     }
 
     @Test
     void getPetByIdThrowsStdExceptionDerivedException() {
+        var id = errorRaisingStringToInt("ThrowsStdExceptionDerivedException");
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
-                    apiInstance.getPetById(9200L).block();
+                    apiInstance.getPetById(id).block();
                 });
         approveException(exception);
     }
 
     @Test
     void getPetByIdThrowsInt() {
+        var id = errorRaisingStringToInt("ThrowsInt");
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
-                    apiInstance.getPetById(9300L).block();
+                    apiInstance.getPetById(id).block();
                 });
         approveException(exception);
     }
 
     @Test
     void getPetByIdReturnsStatus200() {
-        var pet = apiInstance.getPetById(200L).block();
+        var id = errorRaisingStringToInt("ReturnsStatus200");
+        var pet = apiInstance.getPetById(id).block();
         approveResponseAsJson(pet);
     }
 
     @Test
     void getPetByIdReturnsStatus300() {
-        var pet = apiInstance.getPetById(300L).block();
+        var id = errorRaisingStringToInt("ReturnsStatus300");
+        var pet = apiInstance.getPetById(id).block();
         assertNull(pet);
     }
 
     @Test
     void getPetByIdReturnsStatus400() {
+        var id = errorRaisingStringToInt("ReturnsStatus400");
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
-                    apiInstance.getPetById(400L).block();
+                    apiInstance.getPetById(id).block();
                 });
         approveException(exception);
     }
 
     @Test
     void getPetByIdReturnsStatus404() {
+        var id = errorRaisingStringToInt("ReturnsStatus404");
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
-                    apiInstance.getPetById(404L).block();
+                    apiInstance.getPetById(id).block();
                 });
         approveException(exception);
     }

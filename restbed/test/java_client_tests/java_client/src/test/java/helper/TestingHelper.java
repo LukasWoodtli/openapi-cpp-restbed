@@ -34,4 +34,21 @@ public class TestingHelper {
         }
         Approvals.verify(json);
     }
+
+
+    public static long errorRaisingStringToInt(String errorRisingString) {
+        if (errorRisingString.equals("ThrowsApiException")) {
+            return 9100;
+        }
+        else if (errorRisingString.equals("ThrowsStdExceptionDerivedException")) {
+            return 9200;
+        }
+        else if (errorRisingString.equals("ThrowsInt")) {
+            return 9300;
+        }
+
+        var status = errorRisingString.replace("ReturnsStatus", "");
+
+        return Integer.parseInt(status);
+    }
 }

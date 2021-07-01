@@ -30,7 +30,7 @@ int extractReturnStatus(const std::string &errorType) {
 
 
 template <class RETURN_T, class API_EXCEPTION_T>
-std::pair<int, std::shared_ptr<Pet>>
+std::pair<int, std::shared_ptr<RETURN_T>>
 raiseErrorForTesting(const std::shared_ptr<RETURN_T> &modelObj,
                      const std::string &errorType) {
   if ("ThrowsApiException" == errorType) {
@@ -67,7 +67,6 @@ class MyPetApiPetResource : public PetApiPetResource {
 public:
   std::pair<int, std::shared_ptr<Pet>>
   handler_POST(const std::shared_ptr<Pet> &pet) override {
-
     const std::string &name = pet->getName();
 
     return raiseErrorForTesting<Pet, PetApiException>(pet, name);
@@ -101,6 +100,38 @@ public:
   }
 };
 
+class MyStoreApiStoreOrderOrderIdResource : public StoreApiStoreOrderOrderIdResource {
+public:
+  int handler_DELETE(const std::string &orderId) override {
+    auto [status, pet] = raiseErrorForTesting<Pet, PetApiException>(std::make_shared<Pet>(), orderId);
+    return status;
+  }
+
+  std::pair<int, std::shared_ptr<Order>>
+  handler_GET(const int64_t &orderId) override {
+    std::string errorType = intToErrorRaisingString(orderId);
+    const auto order = std::make_shared<Order>();
+    return raiseErrorForTesting<Order, StoreApiException>(order, errorType);
+  }
+};
+
+class MyStoreApiStoreInventoryResource : public StoreApiStoreInventoryResource {
+public:
+  std::pair<int, std::map<std::string, int32_t>> handler_GET() override {
+    std::map<std::string, int32_t> ret;
+    return {300,  ret};
+  }
+};
+
+class MyStoreApiStoreOrderResource : public StoreApiStoreOrderResource {
+public:
+  std::pair<int, std::shared_ptr<Order>>
+  handler_POST(const std::shared_ptr<Order> &order) override {
+    std::string errorType = intToErrorRaisingString(order->getId());
+    return raiseErrorForTesting<Order, StoreApiException>(order, errorType);
+  }
+};
+
 int main() {
   signal(SIGINT,sig_handler);
 
@@ -109,6 +140,11 @@ int main() {
   auto petApi = PetApi(service);
   petApi.setPetApiPetResource(std::make_shared<MyPetApiPetResource>());
   petApi.setPetApiPetPetIdResource(std::make_shared<MyPetApiPetPetIdResource>());
+
+  auto storeApi = StoreApi(service);
+  storeApi.setStoreApiStoreOrderOrderIdResource(std::make_shared<MyStoreApiStoreOrderOrderIdResource>());
+  storeApi.setStoreApiStoreInventoryResource(std::make_shared<MyStoreApiStoreInventoryResource>());
+  storeApi.setStoreApiStoreOrderResource(std::make_shared<MyStoreApiStoreOrderResource>());
 
   const auto settings = std::make_shared<restbed::Settings>();
   settings->set_port(1236);

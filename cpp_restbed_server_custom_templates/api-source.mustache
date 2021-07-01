@@ -140,6 +140,14 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
                                 status_code = e.getStatus();
                                 result = e.what();
                         }
+                        catch(const std::exception& e) {
+                          status_code = 500;
+                          result = e.what();
+                        }
+                        catch(...) {
+                          status_code = 500;
+                          result = "Unknown exception occured";
+                        }
 
 			{{#responses}}
 			if (status_code == {{code}}) {
@@ -270,6 +278,14 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
                         catch(const {{classname}}Exception& e) {
                                 status_code = e.getStatus();
                                 result = e.what();
+                        }
+                        catch(const std::exception& e) {
+                          status_code = 500;
+                          result = e.what();
+                        }
+                        catch(...) {
+                          status_code = 500;
+                          result = "Unknown exception occured";
                         }
 
 			{{#responses}}

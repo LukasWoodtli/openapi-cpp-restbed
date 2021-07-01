@@ -36,7 +36,7 @@ class PetApiTest {
     @Test
     void addPetThatThrowsPetApiException() {
         var pet = new Pet();
-        pet.name("PetThatThrowsPetApiException");
+        pet.name("ThrowsApiException");
         pet.status(Pet.StatusEnum.SOLD);
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
@@ -48,7 +48,7 @@ class PetApiTest {
     @Test
     void addPetThatThrowsStdExceptionDerivedException() {
         var pet = new Pet();
-        pet.name("PetThatThrowsStdExceptionDerivedException");
+        pet.name("ThrowsStdExceptionDerivedException");
         pet.status(Pet.StatusEnum.AVAILABLE);
         var exception = assertThrows(
                 WebClientResponseException.class, () -> {
@@ -60,7 +60,7 @@ class PetApiTest {
     @Test
     void addPetThatThrowsInt() {
         var pet = new Pet();
-        pet.name("PetThatThrowsInt");
+        pet.name("ThrowsInt");
         pet.status(Pet.StatusEnum.AVAILABLE);
         assertThrows(
                 UnknownHttpStatusCodeException.class, () -> {
@@ -71,7 +71,7 @@ class PetApiTest {
     @Test
     void addPetThatReturnsStatus200() {
         var pet = new Pet();
-        pet.name("addPetThatReturnsStatus200");
+        pet.name("ReturnsStatus200");
         pet.status(Pet.StatusEnum.AVAILABLE);
         var response = apiInstance.addPet(pet).block();
         approveResponseAsJson(response);
@@ -80,7 +80,7 @@ class PetApiTest {
     @Test
     void addPetThatReturnsStatus405() {
         var pet = new Pet();
-        pet.name("addPetThatReturnsStatus405");
+        pet.name("ReturnsStatus405");
         pet.status(Pet.StatusEnum.AVAILABLE);
 
         var exception = assertThrows(

@@ -4,7 +4,50 @@
 
 #include <stdexcept>
 
+#include<signal.h>
+void sig_handler(int signum){
+  printf("\nSIGINT received!\n");
+  exit(0);
+}
+
 using namespace org::openapitools::server::api;
+
+namespace {
+const auto RETURN_STATUS = std::string("ReturnsStatus");
+
+bool isReturnStatusString(const std::string &errorType) {
+  return errorType.rfind(RETURN_STATUS, 0) == 0;
+}
+
+int extractReturnStatus(const std::string &errorType) {
+  assert(isReturnStatusString(errorType));
+
+  auto returnValString = errorType;
+  returnValString.erase(0, RETURN_STATUS.length());
+
+  return std::stoi(returnValString);
+}
+
+
+template <class RETURN_T, class API_EXCEPTION_T>
+std::pair<int, std::shared_ptr<Pet>>
+raiseErrorForTesting(const std::shared_ptr<RETURN_T> &modelObj,
+                     const std::string &errorType) {
+  if ("ThrowsApiException" == errorType) {
+    throw API_EXCEPTION_T(500, "ApiException raised");
+  } else if ("ThrowsStdExceptionDerivedException" == errorType) {
+    throw std::logic_error("std::logic_error raised");
+  } else if ("ThrowsInt" == errorType) {
+    throw int(1);
+  }  else if (isReturnStatusString(errorType)) {
+    auto retStatus = extractReturnStatus(errorType);
+    return {retStatus, modelObj};
+  }
+
+  return std::make_pair(500, modelObj);
+}
+
+} // namespace
 
 class MyPetApiPetResource : public PetApiPetResource {
 public:
@@ -13,26 +56,7 @@ public:
 
     const std::string &name = pet->getName();
 
-    if ("PetWithInvalidStatus" == name) {
-      return std::make_pair(500, pet);
-    }
-    else if ("PetThatThrowsPetApiException" == name) {
-      throw PetApiException(500, "PetWithPetApiException raised");
-    }
-    else if ("PetThatThrowsStdExceptionDerivedException" == name) {
-      throw std::logic_error("std::logic_error raised");
-    }
-    else if ("PetThatThrowsInt" == name) {
-      throw int(1);
-    }
-    else if ("addPetThatReturnsStatus200" == name) {
-      return {200, pet};
-    }
-    else if ("addPetThatReturnsStatus405" == name) {
-      return {405, pet};
-    }
-
-    return std::make_pair(500, pet);
+    return raiseErrorForTesting<Pet, PetApiException>(pet, name);
   }
 
   /*
@@ -45,6 +69,8 @@ public:
 
 
 int main() {
+  signal(SIGINT,sig_handler);
+
   const auto service = std::make_shared<restbed::Service>();
 
   auto petApi = PetApi(service);

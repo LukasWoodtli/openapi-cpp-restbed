@@ -4,7 +4,7 @@
     "id" : 0,
     "name" : ""
   },
-  "name" : "addPetThatReturnsStatus200",
+  "name" : "ReturnsStatus200",
   "photoUrls" : [ ],
   "tags" : null,
   "status" : "available"

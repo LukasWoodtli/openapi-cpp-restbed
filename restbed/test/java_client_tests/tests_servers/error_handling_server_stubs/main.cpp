@@ -132,6 +132,50 @@ public:
   }
 };
 
+class MyUserApiUserResource : public UserApiUserResource {
+public:
+  int handler_POST(const std::shared_ptr<User> &user) override {
+    const auto errorType = user->getFirstName();
+    auto [status, user_] = raiseErrorForTesting<User, UserApiException>(user, errorType);
+    return status;
+  }
+};
+
+class MyUserApiUserCreateWithArrayResource : public UserApiUserCreateWithArrayResource {
+public:
+  int handler_POST(const std::vector<std::shared_ptr<User>> &user) override {
+    const auto errorType = user[0]->getFirstName();
+    auto [status, user_] = raiseErrorForTesting<User, UserApiException>(std::make_shared<User>(), errorType);
+    return status;
+  }
+};
+
+class MyUserApiUserCreateWithListResource : public UserApiUserCreateWithListResource {
+public:
+  int handler_POST(const std::vector<std::shared_ptr<User>> &user) override {
+    const auto errorType = user[0]->getFirstName();
+    auto [status, user_] = raiseErrorForTesting<User, UserApiException>(std::make_shared<User>(), errorType);
+    return status;
+  }
+};
+
+class MyUserApiUserLoginResource : public UserApiUserLoginResource {
+public:
+  std::pair<int, std::string>
+  handler_GET(const std::string &username,
+              const std::string &password) override {
+    auto [status, user_] = raiseErrorForTesting<User, UserApiException>(std::make_shared<User>(), username);
+    return {status, username};
+  }
+};
+
+class MyUserApiUserLogoutResource : public UserApiUserLogoutResource {
+public:
+  int handler_GET() override {
+    throw int(5);
+  }
+};
+
 int main() {
   signal(SIGINT,sig_handler);
 
@@ -145,6 +189,14 @@ int main() {
   storeApi.setStoreApiStoreOrderOrderIdResource(std::make_shared<MyStoreApiStoreOrderOrderIdResource>());
   storeApi.setStoreApiStoreInventoryResource(std::make_shared<MyStoreApiStoreInventoryResource>());
   storeApi.setStoreApiStoreOrderResource(std::make_shared<MyStoreApiStoreOrderResource>());
+
+  auto userApi = UserApi(service);
+  userApi.setUserApiUserResource(std::make_shared<MyUserApiUserResource>());
+  userApi.setUserApiUserCreateWithArrayResource(std::make_shared<MyUserApiUserCreateWithArrayResource>());
+  userApi.setUserApiUserCreateWithListResource(std::make_shared<MyUserApiUserCreateWithListResource>());
+  userApi.setUserApiUserLoginResource(std::make_shared<MyUserApiUserLoginResource>());
+  userApi.setUserApiUserLogoutResource(std::make_shared<MyUserApiUserLogoutResource>());
+
 
   const auto settings = std::make_shared<restbed::Settings>();
   settings->set_port(1236);

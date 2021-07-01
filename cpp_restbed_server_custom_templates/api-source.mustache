@@ -326,7 +326,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 {{/vendorExtensions.x-codegen-other-methods}}
 
 {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
-        {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
+        {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}}
         )
 {
         throw {{classname}}Exception(501, "Not implemented");
@@ -334,7 +334,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
 {{#vendorExtensions.x-codegen-other-methods}}
 {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
-        {{#allParams}}{{{dataType}}} const & {{{baseName}}}{{^-last}}, {{/-last}}{{/allParams}}
+    {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}}
         )
 {
         throw {{classname}}Exception(501, "Not implemented");

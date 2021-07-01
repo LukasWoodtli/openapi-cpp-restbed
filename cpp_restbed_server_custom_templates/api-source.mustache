@@ -196,15 +196,15 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 	{{#hasBodyParam}}
 	// Body params are present, therefore we have to fetch them
 	int content_length = request->get_header("Content-Length", 0);
+        std::string file_;
 	session->fetch(content_length,
-		[ this ]( const std::shared_ptr<restbed::Session> session, const restbed::Bytes & body )
+		[ &file_ ]( const std::shared_ptr<restbed::Session> session, const restbed::Bytes & body )
 		{
-
 			const auto request = session->get_request();
-                        std::string file_ = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
-                        {{#allParams}}
-                        std::stringstream sstream(file_);
+                        file_ = restbed::String::format("%.*s\n", ( int ) body.size( ), body.data( ));
+                });
                   {{#allParams}}
+                  std::stringstream sstream(file_);
                   {{#isModel}}
                   std::stringstream {{paramName}}_sstream(file_);
                   boost::property_tree::ptree {{paramName}}_pt;
@@ -226,7 +226,6 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
                   {{/isArray}}
                   {{/isModel}}
                   {{/allParams}}
-                        {{/allParams}}
 	{{/hasBodyParam}}
 
 			{{#hasPathParams}}
@@ -316,11 +315,6 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 			{{/responses}}
                         session->close(status_code, result, { {"Connection", "close"} });
                         return;
-
-
-	{{#hasBodyParam}}
-		});
-	{{/hasBodyParam}}
 }
 {{/vendorExtensions.x-codegen-other-methods}}
 

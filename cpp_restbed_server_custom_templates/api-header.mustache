@@ -66,6 +66,9 @@ public:
     );
     {{/vendorExtensions.x-codegen-other-methods}}
 
+protected:
+    virtual std::string extractBodyContent(const std::shared_ptr<restbed::Session> session);
+
 private:
     void handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session);
     {{#vendorExtensions.x-codegen-other-methods}}

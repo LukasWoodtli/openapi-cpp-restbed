@@ -24,7 +24,7 @@ $generator_cmd generate \
   | tee out.txt
 
 diff -r restbed/generated_src restbed/generated_src_reference
-if [ $? -eq 0 ]
+if [ "$?" -eq "0" ]
 then
   echo Output is same
 else

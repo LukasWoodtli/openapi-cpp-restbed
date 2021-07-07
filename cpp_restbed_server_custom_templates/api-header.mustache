@@ -141,6 +141,12 @@ protected:
     virtual std::pair<int, std::string> handleStdException(const std::exception& e);
     virtual std::pair<int, std::string> handleUnspecifiedException();
 
+
+    virtual void returnResponse(const std::shared_ptr<restbed::Session>& session,
+        const int status, const std::string& result, const std::string& contentType);
+    virtual void defaultSessionClose(const std::shared_ptr<restbed::Session>& session,
+        const int status, const std::string& result);
+
 private:
     void handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session);
     {{#vendorExtensions.x-codegen-other-methods}}

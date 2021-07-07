@@ -92,56 +92,50 @@ std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-n
     return std::make_pair<int, std::string>(500, "Unknown exception occurred");
 }
 
+
 void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session) {
 
-	const auto request = session->get_request();
-	{{#hasBodyParam}}
-	std::string bodyContent = extractBodyContent(session);
+    const auto request = session->get_request();
+    {{#hasBodyParam}}
+    std::string bodyContent = extractBodyContent(session);
 
-        /**
-         * Get body params or form params here from the body content string
-         */
-        {{#allParams}}
-        {{#isModel}}
-        auto {{paramName}} = extractJsonModelBodyParam<{{{baseType}}}>(bodyContent);
-        {{/isModel}}
-        {{#isArray}}
-        auto {{paramName}} = extractJsonArrayBodyParam<{{{baseType}}}>(bodyContent);
-        {{/isArray}}
-        {{/allParams}}
-        {{/hasBodyParam}}
+    // Get body params or form params here from the body content string
+    {{#allParams}}
+    {{#isModel}}
+    auto {{paramName}} = extractJsonModelBodyParam<{{{baseType}}}>(bodyContent);
+    {{/isModel}}
+    {{#isArray}}
+    auto {{paramName}} = extractJsonArrayBodyParam<{{{baseType}}}>(bodyContent);
+    {{/isArray}}
+    {{/allParams}}
+    {{/hasBodyParam}}
 
-        {{#hasPathParams}}
-        // Getting the path params
-        {{#pathParams}}
-        {{#isPrimitiveType}}
-        const {{{dataType}}} {{{paramName}}} = request->get_path_parameter("{{paramName}}", {{{defaultValue}}});
-        {{/isPrimitiveType}}
-        {{/pathParams}}
-        {{/hasPathParams}}
+    {{#hasPathParams}}
+    // Getting the path params
+    {{#pathParams}}
+    {{#isPrimitiveType}}
+    const {{{dataType}}} {{{paramName}}} = getPathParam_{{paramName}}(request);
+    {{/isPrimitiveType}}
+    {{/pathParams}}
+    {{/hasPathParams}}
 
-        {{#hasQueryParams}}
-        // Getting the query params
-        {{#queryParams}}
-        {{#isPrimitiveType}}
-        const {{{dataType}}} {{{paramName}}} = request->get_query_parameter("{{paramName}}", {{{defaultValue}}});
-        {{/isPrimitiveType}}
-        {{#isContainer}}
-        std::string {{{paramName}}}_string = request->get_query_parameter("{{paramName}}", "");
-        {{{dataType}}} {{{paramName}}};
-        boost::split({{{paramName}}}, {{{paramName}}}_string, boost::is_any_of(",;"));
-        {{/isContainer}}
-        {{/queryParams}}
-        {{/hasQueryParams}}
+    {{#hasQueryParams}}
+    // Getting the query params
+    {{#queryParams}}
+    {{#isPrimitiveType}}
+    const {{{dataType}}} {{{paramName}}} = getQueryParam_{{paramName}}(request);
+    {{/isPrimitiveType}}
+    {{/queryParams}}
+    {{/hasQueryParams}}
 
-        {{#hasHeaderParams}}
-        // Getting the headers
-        {{#headerParams}}
-        {{#isPrimitiveType}}
-        const {{{dataType}}} {{{paramName}}} = request->get_header("{{baseName}}", {{{defaultValue}}});
-        {{/isPrimitiveType}}
-        {{/headerParams}}
-        {{/hasHeaderParams}}
+    {{#hasHeaderParams}}
+    // Getting the headers
+    {{#headerParams}}
+    {{#isPrimitiveType}}
+    const {{{dataType}}} {{{paramName}}} = getHeader_{{baseName}}(request);
+    {{/isPrimitiveType}}
+    {{/headerParams}}
+    {{/hasHeaderParams}}
 
         // Change the value of this variable to the appropriate response before sending the response
         int status_code = 500;
@@ -211,54 +205,54 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 // x-extension
 void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session) {
 
-	const auto request = session->get_request();
-	{{#hasBodyParam}}
-        std::string bodyContent = extractBodyContent(session);
+    const auto request = session->get_request();
+    {{#hasBodyParam}}
+    std::string bodyContent = extractBodyContent(session);
 
-        /**
-        * body params or form params here from the body content string
-        */
-        {{#allParams}}
-        {{#isModel}}
-        auto {{paramName}} = extractJsonModelBodyParam<{{{baseType}}}>(bodyContent);
-        {{/isModel}}
-        {{#isArray}}
-        auto {{paramName}} = extractJsonArrayBodyParam<{{{baseType}}}>(bodyContent);
-        {{/isArray}}
-        {{^isModel}}
-        {{^isArray}}
-        auto {{paramName}} = std::make_shared<{{{baseType}}}>(bodyContent);
-        {{/isArray}}
-        {{/isModel}}
-        {{/allParams}}
-	{{/hasBodyParam}}
+    /**
+    * body params or form params here from the body content string
+    */
+    {{#allParams}}
+    {{#isModel}}
+    auto {{paramName}} = extractJsonModelBodyParam<{{{baseType}}}>(bodyContent);
+    {{/isModel}}
+    {{#isArray}}
+    auto {{paramName}} = extractJsonArrayBodyParam<{{{baseType}}}>(bodyContent);
+    {{/isArray}}
+    {{^isModel}}
+    {{^isArray}}
+    auto {{paramName}} = std::make_shared<{{{baseType}}}>(bodyContent);
+    {{/isArray}}
+    {{/isModel}}
+    {{/allParams}}
+    {{/hasBodyParam}}
 
-			{{#hasPathParams}}
-			// Getting the path params
-			{{#pathParams}}
-			{{#isPrimitiveType}}
-			const {{{dataType}}} {{{paramName}}} = request->get_path_parameter("{{paramName}}", {{{defaultValue}}});
-			{{/isPrimitiveType}}
-			{{/pathParams}}
-			{{/hasPathParams}}
+    {{#hasPathParams}}
+    // Getting the path params
+    {{#pathParams}}
+    {{#isPrimitiveType}}
+    const {{{dataType}}} {{{paramName}}} = getPathParam_{{paramName}}_x_extension(request);
+    {{/isPrimitiveType}}
+    {{/pathParams}}
+    {{/hasPathParams}}
 
-			{{#hasQueryParams}}
-			// Getting the query params
-			{{#queryParams}}
-			{{#isPrimitiveType}}
-			const {{{dataType}}} {{{paramName}}} = request->get_query_parameter("{{paramName}}", {{{defaultValue}}});
-			{{/isPrimitiveType}}
-			{{/queryParams}}
-			{{/hasQueryParams}}
+    {{#hasQueryParams}}
+    // Getting the query params
+    {{#queryParams}}
+    {{#isPrimitiveType}}
+    const {{{dataType}}} {{{paramName}}} = getQueryParam_{{paramName}}_x_extension(request);
+    {{/isPrimitiveType}}
+    {{/queryParams}}
+    {{/hasQueryParams}}
 
-			{{#hasHeaderParams}}
-			// Getting the headers
-			{{#headerParams}}
-			{{#isPrimitiveType}}
-			const {{{dataType}}} {{{paramName}}} = request->get_header("{{baseName}}", {{{defaultValue}}});
-			{{/isPrimitiveType}}
-			{{/headerParams}}
-			{{/hasHeaderParams}}
+    {{#hasHeaderParams}}
+    // Getting the headers
+    {{#headerParams}}
+    {{#isPrimitiveType}}
+    const {{{dataType}}} {{{paramName}}} = getHeader_{{baseName}}_x_extension(request);
+    {{/isPrimitiveType}}
+    {{/headerParams}}
+    {{/hasHeaderParams}}
 
 			// Change the value of this variable to the appropriate response before sending the response
 			int status_code = 500;

@@ -15,6 +15,7 @@
 
 #include <corvusoft/restbed/session.hpp>
 #include <corvusoft/restbed/resource.hpp>
+#include <corvusoft/restbed/request.hpp>
 #include <corvusoft/restbed/service.hpp>
 #include <corvusoft/restbed/settings.hpp>
 
@@ -68,6 +69,73 @@ public:
 
 protected:
     virtual std::string extractBodyContent(const std::shared_ptr<restbed::Session>& session);
+
+    {{#hasPathParams}}
+    {{#pathParams}}
+    {{#isPrimitiveType}}
+    virtual {{{dataType}}} getPathParam_{{{paramName}}}(const std::shared_ptr<const restbed::Request>& request)
+    {
+        return request->get_path_parameter("{{{paramName}}}", {{{defaultValue}}});
+    }
+
+    {{/isPrimitiveType}}
+    {{/pathParams}}
+    {{/hasPathParams}}
+    {{#hasQueryParams}}
+    {{#queryParams}}
+    {{#isPrimitiveType}}
+    virtual {{{dataType}}} getQueryParam_{{{paramName}}}(const std::shared_ptr<const restbed::Request>& request)
+    {
+        return request->get_query_parameter("{{{paramName}}}", {{{defaultValue}}});
+    }
+
+    {{/isPrimitiveType}}
+    {{/queryParams}}
+    {{/hasQueryParams}}
+    {{#hasHeaderParams}}
+    {{#headerParams}}
+    {{#isPrimitiveType}}
+    virtual {{{dataType}}} getHeader_{{{baseName}}}(const std::shared_ptr<const restbed::Request>& request)
+    {
+        return request->get_header("{{baseName}}", {{{defaultValue}}});
+    }
+
+    {{/isPrimitiveType}}
+    {{/headerParams}}
+    {{/hasHeaderParams}}
+
+    {{#vendorExtensions.x-codegen-other-methods}}
+    {{#hasPathParams}}
+    {{#pathParams}}
+    {{#isPrimitiveType}}
+    virtual {{{dataType}}} getPathParam_{{{paramName}}}_x_extension(const std::shared_ptr<const restbed::Request>& request)
+    {
+        return request->get_path_parameter("{{{paramName}}}", {{{defaultValue}}});
+    }
+    {{/isPrimitiveType}}
+    {{/pathParams}}
+    {{/hasPathParams}}
+    {{#hasQueryParams}}
+    {{#queryParams}}
+    {{#isPrimitiveType}}
+    virtual {{{dataType}}} getQueryParam_{{{paramName}}}_x_extension(const std::shared_ptr<const restbed::Request>& request)
+    {
+        return request->get_query_parameter("{{{paramName}}}", {{{defaultValue}}});
+    }
+    {{/isPrimitiveType}}
+    {{/queryParams}}
+    {{/hasQueryParams}}
+    {{#hasHeaderParams}}
+    {{#headerParams}}
+    {{#isPrimitiveType}}
+    virtual {{{dataType}}} getHeader_{{{baseName}}}_x_extension(const std::shared_ptr<const restbed::Request>& request)
+    {
+        return request->get_header("{{baseName}}", {{{defaultValue}}});
+    }
+    {{/isPrimitiveType}}
+    {{/headerParams}}
+    {{/hasHeaderParams}}
+    {{/vendorExtensions.x-codegen-other-methods}}
 
     virtual std::pair<int, std::string> handle{{classname}}Exception(const {{classname}}Exception& e);
     virtual std::pair<int, std::string> handleStdException(const std::exception& e);

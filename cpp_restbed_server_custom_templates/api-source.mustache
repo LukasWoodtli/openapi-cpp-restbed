@@ -137,33 +137,30 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
     {{/headerParams}}
     {{/hasHeaderParams}}
 
-        // Change the value of this variable to the appropriate response before sending the response
-        int status_code = 500;
-        {{#returnType}}
-        {{{.}}} resultObject = {{{defaultResponse}}};
-        {{/returnType}}
-        std::string result = "";
+    int status_code = 500;
+    {{#returnType}}
+    {{{.}}} resultObject = {{{defaultResponse}}};
+    {{/returnType}}
+    std::string result = "";
 
-        try {
-              {{#returnType}}
-              std::tie(status_code, resultObject) =
-              {{/returnType}}
-              {{^returnType}}
-              status_code =
-              {{/returnType}}
-                      handler_{{httpMethod}}(
-                              {{#allParams}} {{paramName}} {{^-last}},
-                              {{ / -last}} {{ / allParams}});
-        }
-        catch(const {{classname}}Exception& e) {
-            std::tie(status_code, result) = handle{{classname}}Exception(e);
-        }
-        catch(const std::exception& e) {
-            std::tie(status_code, result) = handleStdException(e);
-        }
-        catch(...) {
-            std::tie(status_code, result) = handleUnspecifiedException();
-        }
+    try {
+        {{#returnType}}
+        std::tie(status_code, resultObject) =
+        {{/returnType}}
+        {{^returnType}}
+         status_code =
+         {{/returnType}}
+             handler_{{httpMethod}}({{#allParams}}{{paramName}}{{^-last}}, {{ / -last}}{{ / allParams}});
+    }
+    catch(const {{classname}}Exception& e) {
+        std::tie(status_code, result) = handle{{classname}}Exception(e);
+    }
+    catch(const std::exception& e) {
+        std::tie(status_code, result) = handleStdException(e);
+    }
+    catch(...) {
+        std::tie(status_code, result) = handleUnspecifiedException();
+    }
 
         {{#responses}}
         if (status_code == {{code}}) {
@@ -232,55 +229,53 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
     {{#pathParams}}
     {{#isPrimitiveType}}
     const {{{dataType}}} {{{paramName}}} = getPathParam_{{paramName}}_x_extension(request);
+
     {{/isPrimitiveType}}
     {{/pathParams}}
     {{/hasPathParams}}
-
     {{#hasQueryParams}}
     // Getting the query params
     {{#queryParams}}
     {{#isPrimitiveType}}
     const {{{dataType}}} {{{paramName}}} = getQueryParam_{{paramName}}_x_extension(request);
+
     {{/isPrimitiveType}}
     {{/queryParams}}
     {{/hasQueryParams}}
-
     {{#hasHeaderParams}}
     // Getting the headers
     {{#headerParams}}
     {{#isPrimitiveType}}
     const {{{dataType}}} {{{paramName}}} = getHeader_{{baseName}}_x_extension(request);
+
     {{/isPrimitiveType}}
     {{/headerParams}}
     {{/hasHeaderParams}}
 
-			// Change the value of this variable to the appropriate response before sending the response
-			int status_code = 500;
-                        {{#returnType}}
-                        {{{.}}} resultObject = {{{defaultResponse}}};
-                        {{/returnType}}
-			std::string result = "";
+    int status_code = 500;
+    {{#returnType}}
+    {{{.}}} resultObject = {{{defaultResponse}}};
+    {{/returnType}}
+    std::string result = "";
 
-                        try {
-                                {{#returnType}}
-                                std::tie(status_code, resultObject) =
-                                {{/returnType}}
-                                {{^returnType}}
-                                status_code =
-                                {{/returnType}}
-                                        handler_{{httpMethod}}(
-                                                  {{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}}
-                                              );
-                        }
-                        catch(const {{classname}}Exception& e) {
-                            std::tie(status_code, result) = handle{{classname}}Exception(e);
-                        }
-                        catch(const std::exception& e) {
-                            std::tie(status_code, result) = handleStdException(e);
-                        }
-                        catch(...) {
-                            std::tie(status_code, result) = handleUnspecifiedException();
-                        }
+    try {
+        {{#returnType}}
+        std::tie(status_code, resultObject) =
+        {{/returnType}}
+        {{^returnType}}
+        status_code =
+        {{/returnType}}
+            handler_{{httpMethod}}({{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}});
+    }
+    catch(const {{classname}}Exception& e) {
+        std::tie(status_code, result) = handle{{classname}}Exception(e);
+    }
+    catch(const std::exception& e) {
+        std::tie(status_code, result) = handleStdException(e);
+    }
+    catch(...) {
+        std::tie(status_code, result) = handleUnspecifiedException();
+    }
 
 			{{#responses}}
 			if (status_code == {{code}}) {

@@ -23,8 +23,8 @@ $generator_cmd generate \
   --global-property debugOperations=true \
   | tee out.txt
 
-diff -r restbed/generated_src restbed/generated_src_reference
-if [ "$?" -eq "0" ]
+
+if diff -rq restbed/generated_src restbed/generated_src_reference
 then
   echo Output is same
 else

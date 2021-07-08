@@ -60,6 +60,22 @@ std::vector<std::shared_ptr<MODEL_T>> extractJsonArrayBodyParam(const std::strin
     return arrayRet;
 }
 
+template <class KEY_T, class VAL_T>
+std::string convertMapResponse(const std::map<KEY_T, VAL_T>& map)
+{
+    boost::property_tree::ptree pt;
+    for(const auto &kv: map) {
+    pt.push_back(boost::property_tree::ptree::value_type(
+        boost::lexical_cast<std::string>(kv.first),
+        boost::property_tree::ptree(
+        boost::lexical_cast<std::string>(kv.second))));
+    }
+    std::stringstream sstream;
+    write_json(sstream, pt);
+    std::string result = sstream.str();
+    return result;
+}
+
 {{#operation}}
 {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(const std::string& context /* = "{{contextPath}}" */)
 {
@@ -177,41 +193,32 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
         {{#responses}}
         if (status_code == {{code}}) {
-                {{#returnType}}
-                {{#isModel}}
-                {{#isString}}
-                result = resultObject;
-                {{/isString}}
-                {{^isString}}
-                result = resultObject->toJsonString();
-                {{/isString}}
-                {{/isModel}}
-                {{#isMap}}
-                boost::property_tree::ptree pt;
-                for(const auto &kv: resultObject) {
-                        pt.push_back(boost::property_tree::ptree::value_type(
-                              boost::lexical_cast<std::string>(kv.first),
-                              boost::property_tree::ptree(
-                                        boost::lexical_cast<std::string>(kv.second))));
-                }
-                std::stringstream sstream;
-                write_json(sstream, pt);
-                result = sstream.str();
-                {{/isMap}}
-                {{/returnType}}
-                {{#headers}}
-                // Description: {{{description}}}
-                setResponseHeader(session, "{{baseName}}");
-                {{/headers}}
+            {{#returnType}}
+            {{#isModel}}
+            {{#isString}}
+            result = resultObject;
+            {{/isString}}
+            {{^isString}}
+            result = resultObject->toJsonString();
+            {{/isString}}
+            {{/isModel}}
+            {{#isMap}}
+            result = convertMapResponse(resultObject);
+            {{/isMap}}
+            {{/returnType}}
+            {{#headers}}
+            // Description: {{{description}}}
+            setResponseHeader(session, "{{baseName}}");
+            {{/headers}}
 
-                {{#primitiveType}}
-                const constexpr auto contentType = "text/plain";
-                {{/primitiveType}}
-                {{^primitiveType}}
-                const constexpr auto contentType = "application/json";
-                {{/primitiveType}}
-                returnResponse(session, {{code}}, result.empty() ? "{{message}}" : result, contentType);
-                return;
+            {{#primitiveType}}
+            const constexpr auto contentType = "text/plain";
+            {{/primitiveType}}
+            {{^primitiveType}}
+            const constexpr auto contentType = "application/json";
+            {{/primitiveType}}
+            returnResponse(session, {{code}}, result.empty() ? "{{message}}" : result, contentType);
+            return;
         }
         {{/responses}}
         defaultSessionClose(session, status_code, result);
@@ -225,9 +232,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
     {{#hasBodyParam}}
     std::string bodyContent = extractBodyContent(session);
 
-    /**
-    * body params or form params here from the body content string
-    */
+    // body params or form params here from the body content string
     {{#allParams}}
     {{#isModel}}
     auto {{paramName}} = extractJsonModelBodyParam<{{{baseType}}}>(bodyContent);
@@ -298,23 +303,19 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 
     {{#responses}}
     if (status_code == {{code}}) {
-                        {{#returnType}}
-                        {{#isModel}}
-                        result = resultObject->toJsonString();
-                        {{/isModel}}
-                        {{#isMap}}
-                        boost::property_tree::ptree pt;
-                        for(const auto &kv: resultObject) {
-                                pt.push_back(boost::property_tree::ptree::value_type(
-                                          boost::lexical_cast<std::string>(kv.first),
-                                          boost::property_tree::ptree(
-                                                    boost::lexical_cast<std::string>(kv.second))));
-                        }
-                        std::stringstream sstream;
-                        write_json(sstream, pt);
-                        result = sstream.str();
-                        {{/isMap}}
-                        {{/returnType}}
+        {{#returnType}}
+        {{#isModel}}
+        {{#isString}}
+        result = resultObject;
+        {{/isString}}
+        {{^isString}}
+        result = resultObject->toJsonString();
+        {{/isString}}
+        {{/isModel}}
+        {{#isMap}}
+        result = convertMapResponse(resultObject);
+        {{/isMap}}
+        {{/returnType}}
         {{#headers}}
         // Description: {{{description}}}
         setResponseHeader(session, "{{baseName}}");
@@ -398,4 +399,3 @@ std::shared_ptr<restbed::Service> {{classname}}::service() {
 {{/apiNamespaceDeclarations}}
 
 {{/operations}}
-

@@ -41,12 +41,16 @@ BOOST_AUTO_TEST_SUITE(StoreApiTest)
 
 BOOST_AUTO_TEST_CASE(startService)
 {
-  auto storeApi = StoreApi(1234);
+  auto restbedService = std::make_shared<restbed::Service>();
+
+  auto storeApi = StoreApi(restbedService);
   std::shared_ptr<StoreApiStoreInventoryResource> res = std::make_shared<MyStoreApiStoreInventoryResource>();
   storeApi.setStoreApiStoreInventoryResource(res);
 
   std::thread thread([&]{
-    storeApi.startService();
+    auto settings = std::make_shared<restbed::Settings>();
+    settings->set_port(1234);
+    restbedService->start(settings);
   });
   thread.detach();
 
@@ -70,11 +74,10 @@ BOOST_AUTO_TEST_CASE(startService)
   status = response.first;
   data = response.second;
 
-  BOOST_TEST(501 == status);
-  BOOST_TEST("Not implemented" == data);
+  BOOST_TEST(404 == status);
+  BOOST_TEST(data.empty());
 
-
-  storeApi.stopService();
+  restbedService->stop();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

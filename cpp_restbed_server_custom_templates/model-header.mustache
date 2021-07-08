@@ -51,6 +51,18 @@ public:
     {{{dataType}}} {{getter}}() const;
     void {{setter}}({{{dataType}}} value);
     {{/vars}}
+
+protected:
+    //////////////////////////////////////
+    // Override these for customization //
+    //////////////////////////////////////
+
+    virtual std::string toJsonString_internal(bool prettyJson = false);
+    virtual void fromJsonString_internal(std::string const& jsonString);
+    virtual boost::property_tree::ptree toPropertyTree_internal();
+    virtual void fromPropertyTree_internal(boost::property_tree::ptree const& pt);
+
+
 protected:
     {{#vars}}
     {{^isContainer}}

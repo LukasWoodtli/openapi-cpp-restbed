@@ -34,14 +34,14 @@ using namespace {{modelNamespace}};
 class {{declspec}} {{classname}}Exception: public std::exception
 {
 public:
-      {{classname}}Exception(int status_code, std::string what);
+    {{classname}}Exception(int status_code, std::string what);
 
-      int getStatus() const;
-      const char* what() const noexcept override;
+    int getStatus() const;
+    const char* what() const noexcept override;
 
 private:
-      int m_status;
-      std::string m_what;
+    int m_status;
+    std::string m_what;
 };
 
 {{#operation}}
@@ -54,17 +54,15 @@ private:
 class {{declspec}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource: public restbed::Resource
 {
 public:
-  {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(const std::string& context = "{{contextPath}}");
+    {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(const std::string& context = "{{contextPath}}");
     virtual ~{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
 
     virtual {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} handler_{{httpMethod}}(
-        {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}}
-    );
+        {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}});
 
     {{#vendorExtensions.x-codegen-other-methods}}
     virtual {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} handler_{{httpMethod}}(
-        {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}}
-    );
+        {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}});
     {{/vendorExtensions.x-codegen-other-methods}}
 
 protected:
@@ -166,16 +164,16 @@ private:
 class {{declspec}} {{classname}}
 {
 public:
-  explicit {{classname}}(std::shared_ptr<restbed::Service> const& restbedService);
+    explicit {{classname}}(std::shared_ptr<restbed::Service> const& restbedService);
 	virtual ~{{classname}}();
 
-        {{#operation}}
-        virtual void set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
-        {{/operation}}
+    {{#operation}}
+    virtual void set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
+    {{/operation}}
 
-        virtual void publishDefaultResources();
+    virtual void publishDefaultResources();
 
-        virtual std::shared_ptr<restbed::Service> service();
+    virtual std::shared_ptr<restbed::Service> service();
 
 protected:
 	{{#operation}}
@@ -183,7 +181,7 @@ protected:
 	{{/operation}}
 
 private:
-        std::shared_ptr<restbed::Service> m_service;
+    std::shared_ptr<restbed::Service> m_service;
 };
 
 

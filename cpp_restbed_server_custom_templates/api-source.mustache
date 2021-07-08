@@ -27,7 +27,7 @@ using namespace {{modelNamespace}};
 }
 int {{classname}}Exception::getStatus() const
 {
-      return m_status;
+    return m_status;
 }
 const char* {{classname}}Exception::what() const noexcept
 {
@@ -104,11 +104,13 @@ std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-n
     return std::make_pair<int, std::string>(500, e.what());
 }
 
-std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handleUnspecifiedException() {
+std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handleUnspecifiedException()
+{
     return std::make_pair<int, std::string>(500, "Unknown exception occurred");
 }
 
-void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::setResponseHeader(const std::shared_ptr<restbed::Session>& session, const std::string& header) {
+void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::setResponseHeader(const std::shared_ptr<restbed::Session>& session, const std::string& header)
+{
     session->set_header(header, "");
 }
 
@@ -122,8 +124,8 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::defaultS
     session->close(status, result, { {"Connection", "close"} });
 }
 
-void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session) {
-
+void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}_internal(const std::shared_ptr<restbed::Session> session)
+{
     const auto request = session->get_request();
     {{#hasBodyParam}}
     std::string bodyContent = extractBodyContent(session);
@@ -191,37 +193,37 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
         std::tie(status_code, result) = handleUnspecifiedException();
     }
 
-        {{#responses}}
-        if (status_code == {{code}}) {
-            {{#returnType}}
-            {{#isModel}}
-            {{#isString}}
-            result = resultObject;
-            {{/isString}}
-            {{^isString}}
-            result = resultObject->toJsonString();
-            {{/isString}}
-            {{/isModel}}
-            {{#isMap}}
-            result = convertMapResponse(resultObject);
-            {{/isMap}}
-            {{/returnType}}
-            {{#headers}}
-            // Description: {{{description}}}
-            setResponseHeader(session, "{{baseName}}");
-            {{/headers}}
+    {{#responses}}
+    if (status_code == {{code}}) {
+        {{#returnType}}
+        {{#isModel}}
+        {{#isString}}
+        result = resultObject;
+        {{/isString}}
+        {{^isString}}
+        result = resultObject->toJsonString();
+        {{/isString}}
+        {{/isModel}}
+        {{#isMap}}
+        result = convertMapResponse(resultObject);
+        {{/isMap}}
+        {{/returnType}}
+        {{#headers}}
+        // Description: {{{description}}}
+        setResponseHeader(session, "{{baseName}}");
+        {{/headers}}
 
-            {{#primitiveType}}
-            const constexpr auto contentType = "text/plain";
-            {{/primitiveType}}
-            {{^primitiveType}}
-            const constexpr auto contentType = "application/json";
-            {{/primitiveType}}
-            returnResponse(session, {{code}}, result.empty() ? "{{message}}" : result, contentType);
-            return;
-        }
-        {{/responses}}
-        defaultSessionClose(session, status_code, result);
+        {{#primitiveType}}
+        const constexpr auto contentType = "text/plain";
+        {{/primitiveType}}
+        {{^primitiveType}}
+        const constexpr auto contentType = "application/json";
+        {{/primitiveType}}
+        returnResponse(session, {{code}}, result.empty() ? "{{message}}" : result, contentType);
+        return;
+    }
+    {{/responses}}
+    defaultSessionClose(session, status_code, result);
 }
 
 {{#vendorExtensions.x-codegen-other-methods}}
@@ -336,18 +338,16 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
 {{/vendorExtensions.x-codegen-other-methods}}
 
 {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
-        {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}}
-        )
+        {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}})
 {
-        throw {{classname}}Exception(501, "Not implemented");
+    throw {{classname}}Exception(501, "Not implemented");
 }
 
 {{#vendorExtensions.x-codegen-other-methods}}
 {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_{{httpMethod}}(
-    {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}}
-        )
+    {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}})
 {
-        throw {{classname}}Exception(501, "Not implemented");
+    throw {{classname}}Exception(501, "Not implemented");
 }
 {{/vendorExtensions.x-codegen-other-methods}}
 
@@ -374,23 +374,22 @@ std::string {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::e
 
 {{#operation}}
 void {{classname}}::set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::shared_ptr<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource> sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource) {
-  m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;
-  m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
+    m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource = sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource;
+    m_service->publish(m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource);
 }
 {{/operation}}
 
 
 void {{classname}}::publishDefaultResources() {
-
-  {{#operation}}
-  if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource)
-    set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>());
-
-  {{/operation}}
+    {{#operation}}
+    if (!m_sp{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource) {
+        set{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(std::make_shared<{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource>());
+    }
+    {{/operation}}
 }
 
 std::shared_ptr<restbed::Service> {{classname}}::service() {
-  return m_service;
+    return m_service;
 }
 
 

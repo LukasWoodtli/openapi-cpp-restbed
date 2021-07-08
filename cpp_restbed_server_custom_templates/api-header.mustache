@@ -57,6 +57,11 @@ public:
     {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource(const std::string& context = "{{contextPath}}");
     virtual ~{{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource();
 
+protected:
+    //////////////////////////////////////////////////////////
+    // Override these to implement the server functionality //
+    //////////////////////////////////////////////////////////
+
     virtual {{#returnType}}std::pair<int, {{{.}}}>{{/returnType}}{{^returnType}}int{{/returnType}} handler_{{httpMethod}}(
         {{#allParams}}{{{dataType}}} const & {{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}});
 
@@ -66,6 +71,10 @@ public:
     {{/vendorExtensions.x-codegen-other-methods}}
 
 protected:
+    //////////////////////////////////////
+    // Override these for customization //
+    //////////////////////////////////////
+
     virtual std::string extractBodyContent(const std::shared_ptr<restbed::Session>& session);
 
     {{#hasPathParams}}

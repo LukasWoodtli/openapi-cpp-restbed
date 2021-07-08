@@ -1,0 +1,16 @@
+dist: bionic
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+os:
+  - linux
+
+script:
+  - cmake -S . -B build
+  - cmake --build build --target all
+  - cmake --build build --target test
+  - cmake --build build --target run_all_java_client_test_for_cpp_server
+
+

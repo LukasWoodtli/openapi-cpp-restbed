@@ -141,6 +141,9 @@ protected:
     virtual std::pair<int, std::string> handleStdException(const std::exception& e);
     virtual std::pair<int, std::string> handleUnspecifiedException();
 
+    virtual void setResponseHeader(const std::shared_ptr<restbed::Session>& session,
+        const std::string& header);
+
 
     virtual void returnResponse(const std::shared_ptr<restbed::Session>& session,
         const int status, const std::string& result, const std::string& contentType);

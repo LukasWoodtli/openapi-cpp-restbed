@@ -92,6 +92,10 @@ std::pair<int, std::string> {{classname}}{{vendorExtensions.x-codegen-resource-n
     return std::make_pair<int, std::string>(500, "Unknown exception occurred");
 }
 
+void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::setResponseHeader(const std::shared_ptr<restbed::Session>& session, const std::string& header) {
+    session->set_header(header, "");
+}
+
 void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::returnResponse(const std::shared_ptr<restbed::Session>& session, const int status, const std::string& result, const std::string& contentType)
 {
     session->close(status, result, { {"Connection", "close"}, {"Content-Type", contentType} });
@@ -197,7 +201,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
                 {{/returnType}}
                 {{#headers}}
                 // Description: {{{description}}}
-                session->set_header("{{baseName}}", ""); // Change second param to your header value
+                setResponseHeader(session, "{{baseName}}");
                 {{/headers}}
 
                 {{#primitiveType}}
@@ -313,7 +317,7 @@ void {{classname}}{{vendorExtensions.x-codegen-resource-name}}Resource::handler_
                         {{/returnType}}
         {{#headers}}
         // Description: {{{description}}}
-        session->set_header("{{baseName}}", ""); // Change second param to your header value
+        setResponseHeader(session, "{{baseName}}");
         {{/headers}}
 
         {{#primitiveType}}

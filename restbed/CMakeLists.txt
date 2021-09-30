@@ -45,6 +45,7 @@ target_sources(restbed_example
 target_link_libraries(restbed_example
         PUBLIC
             Boost::system
-            restbed-shared)
+            restbed-shared
+            -lpthread)
 
 add_subdirectory(test)

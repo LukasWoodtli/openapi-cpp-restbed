@@ -1,0 +1,36 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: ubuntu:focal
+    environment:
+      DEBIAN_FRONTEND: "noninteractive"
+      TZ: "Europe/Zurich"
+    steps:
+      - checkout
+      - run:
+          name: "Install Packages"
+          command: apt-get update && apt-get install -y gcc g++ git cmake libssl-dev libboost-all-dev jq curl openjdk-11-jdk-headless maven
+      - run:
+          name: "Setup Git"
+          command: git config --global user.email "woodtli@.circleciexample.com" && git config --global user.name "Woodtli circleci"
+      - run:
+          name: "Run OpenAPI generator"
+          command: ./gen_code.sh
+      - run:
+          name: "Generate CMake project"
+          command: cmake -B build -S .
+      - run:
+          name: "Build all"
+          command: cmake --build build --target all -- -j 4
+      - run:
+          name: "Test"
+          command: cmake --build build --target test -- -j 4
+      - run:
+          name: "Java Integration Tests"
+          command: cmake --build build --target run_all_java_client_test_for_cpp_server
+workflows:
+  build-workflow:
+    jobs:
+      - build

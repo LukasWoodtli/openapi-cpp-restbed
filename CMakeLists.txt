@@ -1,7 +1,7 @@
 cmake_policy(SET CMP0048 NEW)
 
 project(cpp-open-api VERSION 1)
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -14,6 +14,9 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
 endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} -lpthread)
 
 enable_testing()
 

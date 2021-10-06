@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: "Install Packages"
-          command: apt-get update && apt-get install -y gcc cmake
+          command: apt-get update && apt-get install -y gcc g++ git cmake openjdk-11-jdk-headless
       - run:
           name: "Generate CMake project"
           command: mkdir build && cd build && cmake .. && cd ..

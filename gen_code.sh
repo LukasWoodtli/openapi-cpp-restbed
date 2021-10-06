@@ -24,10 +24,10 @@ $generator_cmd generate \
   | tee out.txt
 
 
-if diff -rq restbed/generated_src restbed/generated_src_reference
-then
-  echo Output is same
-else
-  echo Running meld
-  meld restbed/generated_src restbed/generated_src_reference
-fi
+#if diff -rq restbed/generated_src restbed/generated_src_reference
+#then
+#  echo Output is same
+#else
+#  echo Running meld
+#  meld restbed/generated_src restbed/generated_src_reference
+#fi

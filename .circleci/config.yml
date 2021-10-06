@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: "Install Packages"
-          command: apt-get update && apt-get install -y gcc g++ git cmake libssl-dev openjdk-11-jdk-headless
+          command: apt-get update && apt-get install -y gcc g++ git cmake libssl-dev libboost-all-dev openjdk-11-jdk-headless
       - run:
           name: "Setup Git"
           command: git config --global user.email "woodtli@.circleciexample.com" && git config --global user.name "Woodtli circleci"

@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: "Install Packages"
-          command: apt-get update && apt-get install -y gcc clang cmake
+          command: DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y gcc clang cmake tzdata
       - run:
           name: "Generate CMake project"
           command: mkdir build && cd build && cmake .. && cd ..

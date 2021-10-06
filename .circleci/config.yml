@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       - image: ubuntu:focal
-     environment:
+    environment:
       DEBIAN_FRONTEND: "noninteractive"
       TZ: "Europe/Zurich"
     steps:

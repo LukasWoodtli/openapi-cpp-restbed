@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: "Install Packages"
-          command: apt-get update && apt-get install -y gcc clang cmake
+          command: apt-get update && apt-get install -y gcc cmake
       - run:
           name: "Generate CMake project"
           command: mkdir build && cd build && cmake .. && cd ..

@@ -15,6 +15,9 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
 endif()
 
+
+(set CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} -lpthread)
+
 enable_testing()
 
 add_subdirectory(restbed)

@@ -20,16 +20,16 @@ jobs:
           command: ./gen_code.sh
       - run:
           name: "Generate CMake project"
-          command: mkdir build && cd build && cmake .. && cd ..
+          command: cmake -B build -S .
       - run:
           name: "Build all"
           command: cmake --build build --target all -- -j 4
       - run:
           name: "Test"
-          command: cmake --build build --target test          
+          command: cmake --build build --target test -- -j 4
       - run:
           name: "Java Integration Tests"
-          command: cmake --build build --target run_all_java_client_test_for_cpp_server     
+          command: cmake --build build --target run_all_java_client_test_for_cpp_server
 workflows:
   build-workflow:
     jobs:

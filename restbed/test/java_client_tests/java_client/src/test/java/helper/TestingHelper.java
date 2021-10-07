@@ -2,6 +2,8 @@ package helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.approvaltests.Approvals;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -24,6 +26,9 @@ public class TestingHelper {
 
     public static void approveResponseAsJson(Object reponseObject) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setConfig(objectMapper.getSerializationConfig()
+           .with(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+           .with(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS));
 
         String json = "";
 
